@@ -23,7 +23,20 @@
   </nav>
   <h1>Hi, {{ user }}</h1>
 	<h1>Welcome to Sparion</h1>
-  <button>Create an account</button>
+  {% for account in accounts %}
+    {% if account.user_id == user_id %}
+      <td>{{ account.title }}</td>
+      <td>{{ account.balance }}</td>
+      {% endif %}
+{% endfor %}
+
+
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Create an Account" name="" id="">
+  </form>
 
 
 
