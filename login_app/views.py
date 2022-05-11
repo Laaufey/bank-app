@@ -9,9 +9,12 @@ def login(request):
 
    if request.method == "POST":
       user = authenticate(request, username=request.POST['user'], password=request.POST['password'])
+      print("hello user")
+      print(user.password)
       if user:
             dj_login(request, user)
-            return HttpResponseRedirect(reverse('bank_app:index'))
+            return HttpResponseRedirect(reverse('bank_app:home'))
+
       else:
             context = {
                'error': 'Wrong username or password.'
