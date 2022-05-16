@@ -2,6 +2,8 @@ from django.shortcuts import render, reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.http import HttpResponseRedirect
+from bank_app.models import Customer
+from bank_app.forms import createCustomer
 
 
 def login(request):
@@ -34,12 +36,25 @@ def password_reset(request):
 def sign_up(request):
    context = {}
    if request.method == "POST":
+      customer_form = createCustomer(request.POST)
       password = request.POST['password']
       confirm_password = request.POST['confirm_password']
-      user_name = request.POST['user']
+      username = request.POST['user']
+      first_name = request.POST['first_name']
+      last_name = request.POST['last_name']
       email = request.POST['email']
+      phone_number = request.POST['phone_number']
+      customer_rank = "basic"
+      user = User.objects.create_user(
+            username=username, 
+            first_name=first_name, 
+            last_name=last_name, 
+            email=email, 
+            password=password
+      )
+      Customer.objects.create(user=user, phone_number=phone_number, customer_rank=customer_rank)
       if password == confirm_password:
-            if User.objects.create_user(user_name, email, password):
+            if user:
                return HttpResponseRedirect(reverse('login_app:login'))
             else:
                context = {

@@ -1,0 +1,22 @@
+{% extends 'bank_app/base3.html' %} 
+{% block content %}
+My Profile
+<div class="form">
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ update_user_form}}
+  <input type="submit" value="Update my profile" name="" id="">
+</form>
+</div>
+<li>{{ user }}</li>
+<li>{{ user.first_name }}</li>
+<li>{{ user.last_name }}</li>
+<li>{{ user.email }}</li>
+{% for customer in customers %}
+{% if customer.user_id == user_id %}
+  <li>{{ customer.customer_rank }}</li>
+  <li>{{ customer.phone_number }}</li>
+
+{% endif %}
+{% endfor %}
+{% endblock %}

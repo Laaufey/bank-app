@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/style2.css' %}">
+  <title>{% block title %} Sparion {% endblock %}</title>
+</head>
+<body class="white">
+  <nav>
+    <ul class="ul2">
+      <li>
+        <a href="{% url 'bank_app:index' %}" class="logo2"></a>
+      </li>
+      <li>
+        <form action="{% url 'login_app:logout' %}">
+          <button>Log out</button>
+        </form>      
+      </li>
+    </ul>
+  </nav>
+  <div class="staff_main">
+    <ul class="staff_nav">
+      <li>
+        <a href="{% url 'bank_app:staff' %}">Dashboard</a>
+      </li>
+      <li>
+        <a href="{% url 'bank_app:staffNewCustomer' %}">
+          Customers
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'bank_app:staffNewAccount' %}">
+          Accounts
+        </a>
+      </li>
+    </ul>
+    <div>  
+      <div>
+      <h1 class="hello">Hello {{ user }}</h1>
+      </div>
+      {% block content %} {% endblock %}
+    </div>
+  </div>
+
+  
+<footer>
+  <h5>footer</h5>
+</footer>
+</body>
+</html>

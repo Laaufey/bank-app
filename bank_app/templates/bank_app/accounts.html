@@ -1,0 +1,9 @@
+{% extends 'bank_app/base3.html' %} 
+{% block content %}
+<h3>Your accounts</h3>
+{% for account in accounts %}
+{% if account.user_id == user_id %}
+<li>{{ account.user }} - {{ account.title }} - {{ account.balance }}</li>
+{% endif %}
+{% endfor %}
+{% endblock %}

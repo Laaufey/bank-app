@@ -1,48 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>Sparion</title>
-</head>
-<body>
-  <nav>
-    <ul>
-      <li>Individuals</li>
-      <li>Business</li>
-      <li>Markets</li>
-      <li>About us</li>
-    </ul>
-    <ul>
-      <form action="{% url 'login_app:logout' %}">
-        <button>Log out</button>
-      </form>
-    </ul>
-  </nav>
-  <h1>Hi, {{ user }}</h1>
-	<h1>Welcome to Sparion</h1>
+{% extends 'bank_app/base3.html' %} 
+{% block content %}
+  {% for customer in customers %}
+    {% if customer.user_id == user_id %}
+      <li>{{ customer.customer_rank }}</li>
+    {% endif %}
+  {% endfor %}
   {% for account in accounts %}
     {% if account.user_id == user_id %}
-      <td>{{ account.title }}</td>
-      <td>{{ account.balance }}</td>
-      {% endif %}
-{% endfor %}
-
-
-
-  <form action="" method="POST">
-    {% csrf_token %}
-    {{form}}
-    <input type="submit" value="Create an Account" name="" id="">
-  </form>
-
-
-
+    <li>{{ account.user }} - {{ account.title }} - {{ account.balance }}</li>
+    {% endif %}
+  {% endfor %}
 
   {% if error %}
     {{ error }}
   {% endif %} 
-</body>
-</html>
+{% endblock %}

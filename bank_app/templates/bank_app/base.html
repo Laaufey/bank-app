@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>{% block title %} Sparion {% endblock %}</title>
+  </head>
+  <body class="blue">
+    <nav>
+      <ul class="ul">
+        <li>
+          <a href="{% url 'bank_app:index' %}" class="logo"></a>
+        </li>
+        <li>
+          <a href="">Individuals</a>
+        </li>
+        <li>
+          <a href="">Business</a>
+        </li>
+        <li>
+          <a href="">Markets</a>
+        </li>
+        <li>
+          <a href="">About Us</a>
+        </li>
+        <li>
+          <a href="{% url 'login_app:login' %}">Sign in</a>
+        </li>
+      </ul>
+    </nav>
+    {% block content %} {% endblock %}
+    <footer>
+      <h5>footer</h5>
+    </footer>
+  </body>
+</html>

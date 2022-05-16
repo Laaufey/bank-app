@@ -1,18 +1,16 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-   <title>Account</title>
-</head>
-<body>
-	<h1>Welcome to Sparion</h1>
-   <a href="{% url 'login_app:sign_up' %}">Sign Up</a>
-   <a href="{% url 'login_app:login' %}">Login</a>
-	
-
-
-</body>
-</html>
+{% extends 'bank_app/base.html' %} 
+{% block content %}
+   <div class="front">
+      <div>
+         <h1>Welcome to Sparion</h1>
+         <p>
+            Við hjálpum þér með það sem upp á vantar með Núláni í Arion appinu. Þú getur alltaf greitt inn á lánið, þér að kostnaðarlausu. 
+         </p>
+         <a href="{% url 'login_app:sign_up' %}">
+            Let's start
+         </a>
+      </div>
+   </div>
+   <!-- <a href="{% url 'login_app:sign_up' %}">Sign Up</a>
+   <a href="{% url 'login_app:login' %}">Login</a> -->
+   {% endblock %}
