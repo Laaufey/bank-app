@@ -27,13 +27,28 @@
         <a href="{% url 'bank_app:staff' %}">Dashboard</a>
       </li>
       <li>
-        <a href="{% url 'bank_app:staffNewCustomer' %}">
+        <a href="{% url 'bank_app:staffCustomerView' %}">
           Customers
         </a>
       </li>
       <li>
-        <a href="{% url 'bank_app:staffNewAccount' %}">
+        <a href="{% url 'bank_app:staffAccountView' %}">
           Accounts
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'bank_app:staffNewCustomer' %}">
+          New customer
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'bank_app:staffNewAccount' %}">
+          New account
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'bank_app:staffTransfers' %}">
+          Transfers
         </a>
       </li>
     </ul>

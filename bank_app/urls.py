@@ -13,6 +13,9 @@ urlpatterns = [
    path('loans/', views.loans, name='loans'),
    path('profile/', views.profile, name='profile'),
    path('staff/', views.staff, name='staff'),
+   path('staffAccountView/', views.staffAccountView, name='staffAccountView'),
+   path('staffCustomerView/', views.staffCustomerView, name='staffCustomerView'),
    path('staffNewCustomer', views.staffNewCustomer, name='staffNewCustomer'),
    path('staffNewAccount', views.staffNewAccount, name='staffNewAccount'),
+   path('staffTransfers', views.staffTransfers, name='staffTransfers'),
    ]

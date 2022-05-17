@@ -74,6 +74,13 @@
 .helptext{
   display: none;
 }
+
+.flex{
+  display: flex;
+  gap: 5rem;
+  padding: 1rem;
+}
+
 form{
   display: flex;
   flex-flow: column;
@@ -83,7 +90,7 @@ form{
   /* margin: 0 auto; */
   background-color: rgba(11, 69, 230, 0.2);
   border-radius: 30px;
-  width: 40vw;
+  width: 20vw;
   padding: 2rem;
   text-align: center;
   color: black;

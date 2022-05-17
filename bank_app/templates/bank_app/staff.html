@@ -1,20 +1,4 @@
-{% extends 'bank_app/base2.html' %} 
+{% extends 'bank_app/base/base2.html' %} 
 {% block content %}
-  <h3>Active accounts</h3>
-  {% for account in accounts %}
-    <li>{{ account.user }} - {{ account.title }} - {{ account.balance }}</li>
-  {% endfor %}
-  <div class="form">
-  <form action="" method="POST">
-    {% csrf_token %}
 
-    {{ update_customer_form }}
-    <input type="submit" value="Update customer" name="" id="">
-  </form>
-</div>
-  <h3>Active customers</h3> 
-  {% for customer in customers %}
-  <li>{{ customer }}</li>
-  <li>{{ customer.customer_rank }}</li>
-  {% endfor %}
 {% endblock %}

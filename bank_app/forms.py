@@ -35,7 +35,17 @@ class createAccount(forms.ModelForm):
     # title = forms.CharField(max_length = 200)
     # user = forms.CharField(max_length=200)
 
+class TransferForm(forms.Form):
+  amount = forms.DecimalField(max_digits=10)
+  # debit_account = forms.ModelChoiceField(queryset=Customer.objects.none())
+  debit_account = forms.CharField()
+  credit_account = forms.IntegerField(label='Credit Account Number')
 
+  def clean(self):
+      super().clean()
+      credit_account = self.cleaned_data.get('credit_account')
+      Account.objects.get(pk=credit_account)
+      return self.cleaned_data
 # Not in use I THINK
 
 class UserForm(forms.ModelForm):
@@ -43,4 +53,3 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
-  

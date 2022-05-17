@@ -1,9 +1,19 @@
-{% extends 'bank_app/base3.html' %} 
+{% extends 'bank_app/base/base3.html' %} 
 {% block content %}
+
+
+{% if user.customer.customer_rank == 'basic' %}
+<li>Sorry you can't take a loan</li>
+<li>Contact customer service for further steps</li>
+{% else %}
 <div class="form">
-<form action="">
-  <input type="text" placeholder="Choose a loan">
-  <input type="text" placeholder="Amount">
-</form>
+  <form action="">
+    <input type="text" placeholder="Choose a loan">
+    <input type="text" placeholder="Amount">
+  </form>
 </div>
+{% endif %}
+
+
+
 {% endblock %}

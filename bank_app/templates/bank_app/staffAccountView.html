@@ -1,0 +1,12 @@
+{% extends 'bank_app/base/base2.html' %} 
+{% block content %}
+
+  <h3>Active accounts</h3>
+  {% for account in accounts %}
+    <li>User: {{ account.user }}</li>
+    <li>Account: {{ account.title }}</li>
+    <li>Balance: {{ account.money }}</li>
+
+    <br>
+  {% endfor %}
+{% endblock %}

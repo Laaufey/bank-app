@@ -1,0 +1,14 @@
+{% extends 'bank_app/base/base2.html' %} 
+{% block content %}
+<div class="form">
+  <form action="" method="POST">
+    {% csrf_token %}
+    <fieldset>
+      {% if account.user_id == user_id %}
+      {{ transfer_form }}
+      {% endif %}
+    </fieldset>
+    <input type="submit" value="Make transfer">
+  </form>
+</div>
+{% endblock %}

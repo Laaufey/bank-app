@@ -1,4 +1,4 @@
-{% extends 'bank_app/base3.html' %} 
+{% extends 'bank_app/base/base3.html' %} 
 {% block content %}
   {% for customer in customers %}
     {% if customer.user_id == user_id %}
@@ -7,7 +7,7 @@
   {% endfor %}
   {% for account in accounts %}
     {% if account.user_id == user_id %}
-    <li>{{ account.user }} - {{ account.title }} - {{ account.balance }}</li>
+    <li>{{ account.user }} - {{ account.title }} - {{ account.balance }} - {{ account.money }}</li>
     {% endif %}
   {% endfor %}
 

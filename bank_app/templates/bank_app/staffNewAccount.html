@@ -1,4 +1,4 @@
-{% extends 'bank_app/base2.html' %} 
+{% extends 'bank_app/base/base2.html' %} 
 {% block content %}
   <h1>Create a new account</h1>
   <div class="form">
@@ -8,11 +8,6 @@
     <input type="submit" value="Create an account" name="" id="">
   </form>
 </div>
-  <h3>Active accounts</h3>
-  {% for account in accounts %}
-    <li>{{ account.user }}</li>
-    <li>{{ account.title }}</li>
-    <li>{{ account.balance }}</li>
-    <br>
-  {% endfor %}
+
+
 {% endblock %}

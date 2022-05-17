@@ -1,14 +1,11 @@
+from multiprocessing import context
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Account
-from .models import Customer
+from .models import Account, Customer, Ledger
 from django.contrib.auth.models import User
-from .forms import createAccount
-from .forms import createCustomer
-from .forms import createUser
-from .forms import UpdateCustomerForm
-from .forms import UpdateUserForm
+from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm
+from decimal import Decimal
 
 
 def index(request):
@@ -52,11 +49,35 @@ def accounts(request):
 
 @login_required
 def loans(request):
-   return render(request, 'bank_app/loans.html')
+   context = {
+      'customers':Customer.objects.all(),
+   }
+   return render(request, 'bank_app/loans.html', context)
    
 @login_required
 def transfer(request):
-   return render(request, 'bank_app/transfer.html')
+   transfer_form = TransferForm()
+   transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
+   if request.method == "POST":
+      transfer_form = TransferForm(request.POST)
+      if transfer_form.is_valid():
+         debit_account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'])
+         credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
+
+         amount = transfer_form.cleaned_data['amount']
+         print(debit_account)
+         print(credit_account)
+         print(amount)
+         transfer = Ledger.transfer(amount, debit_account, credit_account)
+         print(transfer)
+   else:
+      transfer_form = TransferForm()
+      print("HeLLO")
+      # print(transfer_form.fields['debit_account'].queryset)
+   context = {
+      'transfer_form':TransferForm
+   }
+   return render(request, 'bank_app/transfer.html', context)
 
 @login_required
 def profile(request):
@@ -79,23 +100,34 @@ def profile(request):
 
 @login_required
 def staff(request):
+   assert request.user.is_staff, 'Not for regular customers, only for admin'
+   context = {
+         'customers':Customer.objects.all(),
+      }
+   return render(request, 'bank_app/staff.html', context)
+
+@login_required
+def staffCustomerView(request):
    user = request.user
    assert request.user.is_staff, 'Not for regular customers, only for admin'
    if request.method == "POST":
       update_customer_form = UpdateCustomerForm(request.POST, instance=request.user.customer)
       if update_customer_form.is_valid:
          update_customer_form.save()
-         print(request.user)
-         print(request.user.customer)
-         print("Customer updated")
    context = {
-         'update_customer_form':UpdateCustomerForm,
-         'accounts':Account.objects.all(),
-         'user_id':user.id,
-         'customers':Customer.objects.all(),
-      }
-   return render(request, 'bank_app/staff.html', context)
+      'update_customer_form':UpdateCustomerForm,
+      'user_id':user.id,
+      'customers':Customer.objects.all(),
+   }
+   return render(request, 'bank_app/staffCustomerView.html', context)
 
+@login_required
+def staffAccountView(request):
+   assert request.user.is_staff, 'Not for regular customers, only for admin'
+   context = {
+      'accounts':Account.objects.all(),
+   }
+   return render(request, 'bank_app/staffAccountView.html', context)
 @login_required
 def staffNewCustomer(request):
    assert request.user.is_staff, 'Not for regular customers, only for admin'
@@ -143,3 +175,29 @@ def staffNewAccount(request):
          'customers':Customer.objects.all(),
       }
    return render(request, 'bank_app/staffNewAccount.html', context)
+
+@login_required
+def staffTransfers(request):
+   assert request.user.is_staff, 'Not for regular customers, only for admin'
+   transfer_form = TransferForm()
+   # transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
+   print(request.user.customer.accounts)
+   print(transfer_form.fields['debit_account'])
+   if request.method == "POST":
+      transfer_form = TransferForm(request.POST)
+      if transfer_form.is_valid():
+         debit_account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'])
+         credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
+         amount = transfer_form.cleaned_data['amount']
+         print(debit_account.pk)
+         # print(credit_account)
+         print(amount)
+         transfer = Ledger.transfer(amount, debit_account, credit_account)
+         print(transfer)
+   else:
+      transfer_form = TransferForm()
+   context = {
+      'transfer_form':TransferForm
+   }  
+   
+   return render(request, 'bank_app/staffTransfers.html', context)
