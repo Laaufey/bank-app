@@ -41,11 +41,12 @@
               {% for other_account in accounts %}
                 {% if other_account.id == movement.account_id %}
                   {% if other_account.title == 'BANK' and transaction.amount >= 0 %}
+                  <li>
                   <a href="{% url 'bank_app:loan_details' transaction.transaction_id %}">
                     {{ transaction.transaction_id }}
                     {{ user.customer.full_name}}
                     {{ transaction.amount }}
-                  </a>
+                  </a></li>
                   {% endif %}
                 {% endif %}
               {% endfor %}
