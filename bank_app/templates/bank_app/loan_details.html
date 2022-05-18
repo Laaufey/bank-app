@@ -1,0 +1,17 @@
+{% extends 'bank_app/base/base3.html' %} 
+{% block content %}
+
+<h1>Your loan details</h1>
+
+{% for transaction in transactions %}
+<li>{{transaction.amount}}</li>
+<li>{{transaction.account.title}}</li>
+{% endfor %}
+<div class="form">
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{ loan_form }}
+    <input type="submit" value="Pay" name="" id="">
+  </form>
+</div>
+{% endblock %}

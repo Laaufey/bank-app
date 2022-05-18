@@ -3,11 +3,11 @@
 <div class="form">
   <form action="" method="POST">
     {% csrf_token %}
-    <fieldset>
+
       {% if account.user_id == user_id %}
       {{ transfer_form }}
       {% endif %}
-    </fieldset>
+
     <input type="submit" value="Make transfer">
     <!-- <label for="amount">Send Amount</label>
     <input type="number" id="amount" placeholder="DKK 100,00">

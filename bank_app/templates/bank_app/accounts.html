@@ -2,8 +2,37 @@
 {% block content %}
 <h3>Your accounts</h3>
 {% for account in accounts %}
-{% if account.user_id == user_id %}
-<li>{{ account.user }} - {{ account.title }} - {{ account.balance }}</li>
-{% endif %}
+  {% if account.user_id == user_id %}
+  <li>{{ account.user }} - {{ account.title }} - {{ account.money }}kr</li>
+
+    {% for transaction in account.movements %}
+
+      <li>12.05.2022
+      {% for movement in ledger %}
+        {% if transaction.transaction_id == movement.transaction_id and movement.account_id != transaction.account_id %}
+          {% for other_account in accounts %}
+            {% if other_account.id == movement.account_id %}
+              {{ other_account.title }}
+              {% if other_account.title == 'BANK' %}
+              LOAN
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+      {{ transaction.transaction_id }}
+      {{ transaction.text }}
+      {% if transaction.amount >= 0 %}
+        {{ transaction.amount }}
+      {% else %}
+        {{ transaction.amount }}
+      {% endif %}
+      </li>
+
+    {% endfor %}
+  {% endif %}
 {% endfor %}
+
+
+
 {% endblock %}

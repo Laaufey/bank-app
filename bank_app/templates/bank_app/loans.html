@@ -6,11 +6,55 @@
 <li>Sorry you can't take a loan</li>
 <li>Contact customer service for further steps</li>
 {% else %}
-<div class="form">
-  <form action="">
-    <input type="text" placeholder="Choose a loan">
-    <input type="text" placeholder="Amount">
-  </form>
+<!-- <div class="backmodall"></div> -->
+<div class="modal" hidden>
+  <div class="form">
+    <form action="">
+      <label for="amount">Amount</label>
+      <input type="text" id="amount">
+      <button>Pay</button>
+    </form>
+  </div>
+</div>
+<div class="flex">
+  <div class="form" >
+    <form action="" method="POST">
+      {% csrf_token %}
+      {{ loan_form }}
+      <input type="submit" value="Take loan">
+    </form>
+  </div>
+  <div>
+    <li>
+      Lánsnúmer
+      Lántakandi
+      Útibú
+      Tegund
+      Gjalddagi
+      Eftirstöðvar
+    </li>
+    {% for account in accounts %}
+      {% if account.user_id == user_id %}
+        {% for transaction in account.movements %}
+          {% for movement in ledger %}
+            {% if transaction.transaction_id == movement.transaction_id and movement.account_id != transaction.account_id %}
+              {% for other_account in accounts %}
+                {% if other_account.id == movement.account_id %}
+                  {% if other_account.title == 'BANK' and transaction.amount >= 0 %}
+                  <a href="{% url 'bank_app:loan_details' transaction.transaction_id %}">
+                    {{ transaction.transaction_id }}
+                    {{ user.customer.full_name}}
+                    {{ transaction.amount }}
+                  </a>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </div>
 </div>
 {% endif %}
 

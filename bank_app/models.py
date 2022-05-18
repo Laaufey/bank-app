@@ -66,18 +66,19 @@ class Ledger(models.Model):
    account = models.ForeignKey(Account, on_delete=models.PROTECT)
    transaction = models.ForeignKey(Store, on_delete=models.PROTECT)
    amount = models.DecimalField(max_digits=10, decimal_places=2)
+   text = models.TextField(default="text")
 
    @classmethod
-   def transfer(cls, amount, debit_account, credit_account, is_loan=False):
+   def transfer(cls, amount, debit_account, debit_text, credit_account, credit_text, is_loan=False):
       assert amount >= 0
       with transaction.atomic():
          if debit_account.money >= amount or is_loan:
             uid = Store.uid
-            cls(amount=-amount, transaction=uid, account=debit_account).save()
-            cls(amount=amount, transaction=uid, account=credit_account).save()
+            cls(amount=-amount, transaction=uid, account=debit_account, text=debit_text,).save()
+            cls(amount=amount, transaction=uid, account=credit_account, text=credit_text).save()
          else:
             print("Sorry")
       return uid
    
    def __str__(self):
-      return f'{self.amount} -- {self.transaction} -- {self.account}'
+      return f'{self.amount} -- {self.transaction} -- {self.account} -- {self.text}'
