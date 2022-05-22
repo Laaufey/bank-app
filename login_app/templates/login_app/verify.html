@@ -1,0 +1,18 @@
+{% extends 'bank_app/base/base.html' %} 
+{% block title %} Sparion - Sign in {% endblock %}
+{% block content %}
+<div class="login_app">
+   <h1>Verify</h1>
+   <form action="{% url 'login_app:verify' %}" method="POST">
+
+         {% csrf_token %}
+         
+         <input type="number" name="code" placeholder="Code">
+
+         <button>Verify</button>
+      </form>
+   </div>
+   {% if error %}
+      {{ error }}
+   {% endif %}
+{% endblock %}

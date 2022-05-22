@@ -39,9 +39,9 @@ class createAccount(forms.ModelForm):
 class TransferForm(forms.Form):
   amount = forms.DecimalField(max_digits=10)
   debit_account = forms.ModelChoiceField(label='Debit Account', queryset=Customer.objects.none())
-  debit_text = forms.CharField(max_length=35)
+  debit_text = forms.CharField(max_length=35, label="Note:")
   credit_account = forms.IntegerField(label='Credit Account Number')
-  credit_text = forms.CharField(max_length=35)
+  credit_text = forms.CharField(max_length=35, label="Explanaition:")
 
   def clean(self):
       super().clean()

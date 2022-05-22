@@ -58,7 +58,6 @@ class Customer(models.Model):
    def accounts(self) -> QuerySet:
       return Account.objects.filter(user=self.user)
 
-   
    def __str__(self):
       return f'{self.user} - {self.full_name} - {self.customer_rank}'
 

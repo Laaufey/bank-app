@@ -1,12 +1,21 @@
 {% extends 'bank_app/base/base2.html' %} 
 {% block content %}
-
+<h2>Accounts</h2>
   <h3>Active accounts</h3>
-  {% for account in accounts %}
-    <li>User: {{ account.user }}</li>
-    <li>Account: {{ account.title }}</li>
-    <li>Balance: {{ account.money }}</li>
-
-    <br>
-  {% endfor %}
+  <table class="account-table">
+    <tr class="account-titles">
+      <th>Account no.</th>
+      <th>Account owner</th>
+      <th>Account name</th>
+      <th class="float-right">Amount</th>
+    </tr>
+    {% for account in accounts %}
+      <tr>
+        <td><a href="">{{ account.id }}</a></td>
+        <td>{{ account.user }}</td>
+        <td>{{ account.title }}</td>
+        <td class="float-right">{{ account.money }}</td>
+      </tr>
+      {% endfor %}
+    </table>
 {% endblock %}

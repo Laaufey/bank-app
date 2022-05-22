@@ -6,10 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/style2.css' %}">
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <title>{% block title %} Sparion {% endblock %}</title>
 </head>
 <body class="white">
-  <nav>
+  <nav class="blue">
     <ul class="ul2">
       <li>
         <a href="{% url 'bank_app:index' %}" class="logo2"></a>
@@ -23,40 +25,43 @@
   </nav>
   <div class="staff_main">
     <ul class="staff_nav">
-      <li>
-        <a href="{% url 'bank_app:staff' %}">Dashboard</a>
-      </li>
-      <li>
+      <a href="">
+        <li class="head">  
+          <ion-icon size="large" name="person-outline"></ion-icon>  
+          {{ user }}
+        </li>
+      </a>
+      <div class="line"></div>
+
+        <a href="{% url 'bank_app:staff' %}">
+          <li>Dashboard</li>
+        </a>
+        <div class="line"></div>
         <a href="{% url 'bank_app:staffCustomerView' %}">
-          Customers
+          <li>Customers</li>
         </a>
-      </li>
-      <li>
+        <div class="line"></div>
         <a href="{% url 'bank_app:staffAccountView' %}">
-          Accounts
+          <li>Accounts</li>
         </a>
-      </li>
-      <li>
+        <div class="line"></div>
         <a href="{% url 'bank_app:staffNewCustomer' %}">
-          New customer
+          <li>New customer</li>
         </a>
-      </li>
-      <li>
+        <div class="line"></div>
         <a href="{% url 'bank_app:staffNewAccount' %}">
-          New account
+          <li>New account</li>
         </a>
-      </li>
-      <li>
+        <div class="line"></div>
         <a href="{% url 'bank_app:staffTransfers' %}">
-          Transfers
+          <li>Transfers</li>
         </a>
-      </li>
+        <div class="line"></div>
     </ul>
     <div>  
-      <div>
-      <h1 class="hello">Hello {{ user }}</h1>
+      <div class="box">
+        {% block content %} {% endblock %}
       </div>
-      {% block content %} {% endblock %}
     </div>
   </div>
 

@@ -1,12 +1,14 @@
 {% extends 'bank_app/base/base2.html' %} 
 {% block content %}
-  <h1>Create new customer</h1>
-  <div class="form">
+<h2>New customer</h2>  
+<div class="form">
+  <div class="grayform">
     <form action="" method="POST">
       {% csrf_token %}
       {{user_form}}
       {{customer_form}}
       <input type="submit" value="Create a new cusomer" name="" id="">
     </form>
+  </div>
   </div>  
 {% endblock %}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
+    <title>flags / eu</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="50" height="50"></rect>
+    </defs>
+    <g id="flags-/-eu" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="EU">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#FFFFFF" xlink:href="#path-1"></use>
+            <rect id="Mask-Copy" fill="#0A45E6" mask="url(#mask-2)" x="0" y="0" width="50" height="50"></rect>
+            <path d="M26,10 L23,11 L24,9 L23,6 L25,7 L28,6 L27,8 L28,11 L26,10 Z M26,43 L23,44 L24,42 L23,39 L25,40 L28,39 L27,41 L28,44 L26,43 Z M42,27 L39,28 L40,26 L39,23 L41,24 L44,23 L43,25 L44,28 L42,27 Z M9,27 L6,28 L7,26 L6,23 L8,24 L11,23 L10,25 L11,28 L9,27 Z M40,18 L37,19 L38,17 L37,14 L39,15 L42,14 L41,16 L42,19 L40,18 Z M11,35 L8,36 L9,34 L8,31 L10,32 L13,31 L12,33 L13,36 L11,35 Z M34,12 L31,13 L32,11 L31,8 L33,9 L36,8 L35,10 L36,13 L34,12 Z M17,41 L14,42 L15,40 L14,37 L16,38 L19,37 L18,39 L19,42 L17,41 Z M40,35 L37,36 L38,34 L37,31 L39,32 L42,31 L41,33 L42,36 L40,35 Z M11,18 L8,19 L9,17 L8,14 L10,15 L13,14 L12,16 L13,19 L11,18 Z M34,41 L31,42 L32,40 L31,37 L33,38 L36,37 L35,39 L36,42 L34,41 Z M17,12 L14,13 L15,11 L14,8 L16,9 L19,8 L18,10 L19,13 L17,12 Z" id="Star-2" fill="#FABF57" mask="url(#mask-2)"></path>
+        </g>
+    </g>
+</svg>

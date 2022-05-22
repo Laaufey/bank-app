@@ -1,15 +1,26 @@
 *{
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
 }
-body.blue{
-  background-color: #0b45e6;
+.blue{
+  background-image: linear-gradient(173deg, #0b45e6 50%, #ffffff 50%);
+  /* background-color: #0b45e6; */
+  height: 40vh;
+  width: 100vw;
+}
+.footer-gray{
+  background-image: linear-gradient(173deg, white 50%, rgba(79,42,96,0.07) 50%);
+  /* background-color: #0b45e6; */
+  height: 40vh;
+  width: 100vw;
 }
 body.white{
   background-color: white;
-
 }
-
+nav{
+    background-color: #0b45e6;
+}
 .logo{
   background-image: url("/static/blomid@3x.svg");
   height: 17.5px;
@@ -60,11 +71,14 @@ li:last-child a:hover{
   grid-template-columns: 1fr 1fr;
   padding: 4rem 2rem;
   color: white;
+  gap: 3rem;
+  height: 55vh;
+  background-color: #0b45e6;
 }
 .front h1{
   color: #e8e8e8;
   font-family: sans-serif;
-  font-size: 4.5rem;
+  font-size: 60px;
 }
 .front p{
   margin-top: 1rem;
@@ -84,11 +98,75 @@ li:last-child a:hover{
   border: none;
   font-weight: bold;
 }
+.front_2{
+  padding: 0 2rem;
+}
+.front_2 h1{
+  color: #0b45e6;
+  font-family: sans-serif;
+  font-size: 48px;
+}
+.currency{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+.table{
+  padding-top: 3rem;
+}
+table{
+  font-size: 16px;
+  width: 100%;
+  text-align: right;
+  border-collapse: collapse;
+  display: table;
+}
+tr{
+  display: table-row;
+}
+table tbody tr {
+  border-bottom: 1px solid #efefea;
+}
+table th{
+  font-weight: 600;
+  padding: 10px;
+  padding-bottom: 15px !important;
+}
+table td{  
+  padding: 23px 15px;
+}
+.table tbody td input {
+  width: auto;
+  min-width: 100px;
+  max-width: 130px;
+  color: #0b45e6;
+  text-align: right;
+  outline: 0;
+  border: 0;
+  font-size: 16px;
+}
+.flagice, .flagdkk, .flageur{
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+  padding: 15.7px 25.5px;
+  border-radius: 15px;
+}
+.flagice{
+  background-image: url("/static/images/iceland.svg");
+}
+.flagdkk{
+  background-image: url("/static/images/dk--svg.svg");
+}
+.flageur{
+  background-image: url("/static/images/eu--svg.svg");
+}
+
 
 /* LOGIN APP */
 .login_app{
   margin: 0 auto;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #0b45e6;
   border-radius: 30px;
   width: 40vw;
   padding: 2rem;
@@ -124,4 +202,20 @@ li:last-child a:hover{
 .login_app form p a{
   color: white;
   text-decoration: none;
+}
+
+/* MEDIA QUERIES */
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+.front, .front_2{
+  padding: 4rem 6.4rem;
+}
+}
+@media only screen and (min-width: 992px) {
+
+.hero img{
+  max-width: 900px;
+  max-height: 660px;
+}
 }

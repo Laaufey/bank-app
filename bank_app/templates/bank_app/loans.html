@@ -1,10 +1,12 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
-
+<h2>Loans</h2>
 
 {% if user.customer.customer_rank == 'basic' %}
-<li>Sorry you can't take a loan</li>
-<li>Contact customer service for further steps</li>
+<div class="no-loans">
+  <ion-icon size="large" name="information-circle-outline"></ion-icon>
+  <p>You do not have any loans registered with Sparion Bank</p>
+</div>
 {% else %}
 <!-- <div class="backmodall"></div> -->
 <div class="modal" hidden>
@@ -17,22 +19,16 @@
   </div>
 </div>
 <div class="flex">
-  <div class="form" >
-    <form action="" method="POST">
-      {% csrf_token %}
-      {{ loan_form }}
-      <input type="submit" value="Take loan">
-    </form>
-  </div>
   <div>
-    <li>
-      Lánsnúmer
-      Lántakandi
-      Útibú
-      Tegund
-      Gjalddagi
-      Eftirstöðvar
-    </li>
+    <h3>Your loans</h4>
+    <table class="account-table">
+      <tr class="account-titles">
+        <th>Loan no.</th>
+        <th>Loan taker</th>
+        <th>Loan type</th>
+        <th>Due date</th>
+        <th class="float-right">Remaining</th>
+      </tr>
     {% for account in accounts %}
       {% if account.user_id == user_id %}
         {% for transaction in account.movements %}
@@ -41,12 +37,13 @@
               {% for other_account in accounts %}
                 {% if other_account.id == movement.account_id %}
                   {% if other_account.title == 'BANK' and transaction.amount >= 0 %}
-                  <li>
-                  <a href="{% url 'bank_app:loan_details' transaction.transaction_id %}">
-                    {{ transaction.transaction_id }}
-                    {{ user.customer.full_name}}
-                    {{ transaction.amount }}
-                  </a></li>
+                    <tr>
+                      <td><a href="{% url 'bank_app:loan_details' transaction.transaction_id %}">{{ transaction.transaction_id }}</a></td>
+                      <td>{{ user.customer.full_name }}</td>
+                      <td>Regular</td>
+                      <td>01.07.2022</td>
+                      <td class="float-right">{{ transaction.amount }} kr.</td>
+                    </tr>
                   {% endif %}
                 {% endif %}
               {% endfor %}
@@ -55,6 +52,17 @@
         {% endfor %}
       {% endif %}
     {% endfor %}
+    </table>
+  </div>
+  <div class="form loanform" >
+    <h3>Take a new loan</h3>
+    <div class="grayform">
+      <form action="" method="POST">
+        {% csrf_token %}
+        {{ loan_form }}
+        <input type="submit" value="Take loan">
+      </form>
+    </div>
   </div>
 </div>
 {% endif %}

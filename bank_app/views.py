@@ -44,7 +44,8 @@ def accounts(request):
    context = {
       'accounts':Account.objects.all(),
       'user_id':user.id,
-      'ledger':Ledger.objects.all()
+      'ledger':Ledger.objects.all(),
+      'count':Account.objects.count()
       }
    return render(request, 'bank_app/accounts.html', context)
 

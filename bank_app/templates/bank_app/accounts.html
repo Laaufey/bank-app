@@ -1,35 +1,48 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
-<h3>Your accounts</h3>
+<h2>Your accounts</h2>
 {% for account in accounts %}
   {% if account.user_id == user_id %}
-  <li>{{ account.user }} - {{ account.title }} - {{ account.money }}kr</li>
-
+  <h3>{{ account.title }} - {{ account.money }}kr</h3>
+  <table class="account-table">
+    <tr class="account-titles">
+      <th>Date</th>
+      <th>Account</th>
+      <th>Type</th>
+      <th>Number</th>
+      <th>Text</th>
+      <th>Amount</th>
+    </tr>
     {% for transaction in account.movements %}
-
-      <li>12.05.2022
+    <tr>
+      <td>12.05.2022</td>
       {% for movement in ledger %}
-        {% if transaction.transaction_id == movement.transaction_id and movement.account_id != transaction.account_id %}
-          {% for other_account in accounts %}
-            {% if other_account.id == movement.account_id %}
-              {{ other_account.title }}
-              {% if other_account.title == 'BANK' %}
-              LOAN
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-      {% endfor %}
-      {{ transaction.transaction_id }}
-      {{ transaction.text }}
-      {% if transaction.amount >= 0 %}
-        {{ transaction.amount }}
+      {% if transaction.transaction_id == movement.transaction_id and movement.account_id != transaction.account_id %}
+      {% for other_account in accounts %}
+      {% if other_account.id == movement.account_id %}
+      <td>{{ other_account.title }}</td>
+      {% if other_account.title == 'BANK' and transaction.amount >= 0 %}
+      <td>Loan</td>
       {% else %}
-        {{ transaction.amount }}
+      <td>Transfer</td>
       {% endif %}
-      </li>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
+      <td>{{ transaction.transaction_id }}</td> 
+      <td>{{ transaction.text }}</td> 
+      {% if transaction.amount >= 0 %}
+      <td class="green">{{ transaction.amount }}</td>
+      {% else %}
+      <td class="red">{{ transaction.amount }}</td> 
+      {% endif %}
+      
+    
+    </tr>
 
     {% endfor %}
+  </table>
   {% endif %}
 {% endfor %}
 

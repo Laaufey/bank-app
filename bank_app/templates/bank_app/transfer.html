@@ -1,12 +1,30 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
+{% load static %}
+<h2>Transfer</h2>
 <div class="form">
   <form action="" method="POST">
     {% csrf_token %}
-
-      {% if account.user_id == user_id %}
-      {{ transfer_form }}
-      {% endif %}
+    
+    <h4>Payer</h4>
+    {% if account.user_id == user_id %}
+      <label for="debit_account">Account</label>
+      {{ transfer_form.debit_account }}
+      <h4>Recipient</h4>
+      <span class="grayform">
+      <label for="credit_account">Account no.</label>
+      {{ transfer_form.credit_account }}
+      <label for="amount">Amount</label>
+      {{ transfer_form.amount }}
+      </span>
+      <h4>Options</h4>
+      <span class="options">
+      <div><label for="debit_text">My explanation</label>
+        {{ transfer_form.debit_text }}</div>
+      <div><label for="credit_text">Short comment</label>
+      {{ transfer_form.credit_text }}</div>
+      </span>
+    {% endif %}
 
     <input type="submit" value="Make transfer">
     <!-- <label for="amount">Send Amount</label>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px" viewBox="0 0 50 50" version="1.1">
+    <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
+    <title>flags / no</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="50" height="50"/>
+    </defs>
+    <g id="flags-/-no" stroke="none" stroke-width="1" fill="#F5F5F5" fill-rule="evenodd">
+        <g id="NO">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"/>
+            </mask>
+            <rect stroke="#0A45E6" stroke-width="0" x="0" y="0" width="50" height="50"/>
+            <path d="M20,0 L20,20 L0,20 L0,0 L20,0 Z M30,0 L50,0 L50,20 L30,20 L30,0 Z M50,30 L50,50 L30,50 L30,30 L50,30 Z M20,50 L0,50 L0,30 L20,30 L20,50 Z" id="Combined-Shape" fill="#FE5A88" mask="url(#mask-2)"/>
+            <polygon id="Rectangle-2" fill="#F5F5F5" mask="url(#mask-2)" points="0 27 23 27 23 50 27 50 27 27 50 27 50 23 27 23 27 0 23 0 23 23 0 23"/>
+        </g>
+    </g>
+</svg>

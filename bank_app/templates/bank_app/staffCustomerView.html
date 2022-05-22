@@ -1,21 +1,37 @@
 {% extends 'bank_app/base/base2.html' %} 
 {% block content %}
-
+<h2>Customers</h2>
 <div class="flex">
   <div>
     <h3>Active customers</h3> 
-    {% for customer in customers %}
-    <li>
-      <a href="">{{ customer.full_name }}</a>
-    </li>
-    {% endfor %}
+    
+    <table class="account-table">
+      <tr class="account-titles">
+        <th>Customer no.</th>
+        <th>Full name</th>
+        <th>Membership</th>
+        <th>Accounts</th>
+      </tr>
+      {% for customer in customers %}
+      <tr>
+        <td>{{ customer.user.id }}</td>
+        <td><a href="">{{ customer.full_name }}</a></td>
+        <td>{{ customer.customer_rank }}</td>
+        <td>{{ customer.customer_rank }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    
   </div>
   <div class="form">
-    <form action="" method="POST">
-      {% csrf_token %}
-      {{ update_customer_form }}
-      <input type="submit" value="Update customer" name="" id="">
-    </form>
+    <h3>Change memberships</h3>
+    <div class="grayform">
+      <form action="" method="POST">
+        {% csrf_token %}
+        {{ update_customer_form }}
+        <input type="submit" value="Update customer" name="" id="">
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}

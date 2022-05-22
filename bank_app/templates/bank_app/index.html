@@ -1,13 +1,95 @@
 {% extends 'bank_app/base/base.html' %} 
 {% block content %}
+{% load static %}
    <div class="front">
-      <div>
+      <div class="">
          <h1>Welcome to Sparion</h1>
          <p>
             Við hjálpum þér með það sem upp á vantar með Núláni í Arion appinu. Þú getur alltaf greitt inn á lánið, þér að kostnaðarlausu. 
          </p>
          <a href="{% url 'login_app:sign_up' %}">
             Let's start
+         </a>
+      </div>
+      <div class="hero">
+         <img src="{% static 'images/hero.jpeg' %}" alt="">
+      </div>
+   </div>
+   <div class="blue"></div>
+   <div class="front_2">
+      <h1>Currency converter</h1>
+      <div class="currency">
+         <div>
+            <img src="{% static 'images/coffee.png' %}" alt="">
+         </div>
+         <div class="table">
+            <table>
+               <thead>
+                  <tr>
+                     <th>Currency</th>
+                     <th ></th>
+                     <th>Buy</th>
+                     <th>Sell</th>
+                     <th>Change</th>
+                     <th>Amount</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td>
+                        <span class="flagice"></span>
+                     </td>
+                     <td>ISK</td>
+                     <td>1.00</td>
+                     <td>1.00</td>
+                     <td>0.00</td>
+                     <td>
+                        <label for=""></label>
+                        <input type="tel" name="" value="1000" id="currency-one" onchange="calculate('ISK',value)">
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <span class="flagdkk"></span>
+                     </td>
+                     <td>DKK</td>
+                     <td>1.00</td>
+                     <td>1.00</td>
+                     <td>0.00</td>
+                     <td>
+                        <label for=""></label>
+                        <input type="tel" name="" value="1.000" id="currency-two" onchange="calculate('DKK',value)">
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <span class="flageur"></span>
+                     </td>
+                     <td>EUR</td>
+                     <td>1.00</td>
+                     <td>1.00</td>
+                     <td>0.00</td>
+                     <td>
+                        <label for=""></label>
+                        <input type="tel" name="" value="1.000" id="currency-three" onchange="calculate('EUR',value)">
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+   <div class="footer-gray"></div>
+   <div class="footer-home">
+      <div>
+         <h4>Sign up for a new account in minutes.</h4>
+      </div>
+      <div>
+         <a href="{% url 'login_app:sign_up' %}">
+            Sign up
+         </a>
+         <a href="">
+            Contact us
          </a>
       </div>
    </div>

@@ -1,6 +1,28 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
-My Profile
+<h2>Profile</h2>
+<ul class="profile-nav">
+  <a href="">
+    <li>
+      General settings
+    </li>
+  </a>
+  <a href="">
+    <li>
+      Profile settings
+    </li>
+  </a>
+  <a href="">
+    <li>
+      Change username
+    </li>
+  </a>
+  <a href="">
+    <li>
+      Change password
+    </li>
+  </a>
+</ul>
 <div class="form">
 <form action="" method="POST">
   {% csrf_token %}
