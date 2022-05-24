@@ -3,13 +3,17 @@ from multiprocessing import context
 from tokenize import blank_re
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views import View
 import requests
 from .models import Account, Customer, Ledger, ExternalLedger, Bank
 from django.contrib.auth.models import User
 from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm
 from decimal import Decimal
-
+from rest_framework import permissions
+from rest_framework import viewsets
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 def index(request):
    return render(request, 'bank_app/index.html')
@@ -130,6 +134,8 @@ def transfer(request):
             print(transfer)
          else:
             r = requests.post(credit_transfer_path, auth=("laufey", "password"), data=request.POST)
+            print(credit_transfer_path)
+            print(r)
             if r.status_code == 200:
                transfer = ExternalLedger.transfer(amount, debit_account, debit_text, credit_bank_id)
                print(transfer)
@@ -148,6 +154,8 @@ def transfer(request):
 @login_required
 def receive_external_transfer(request):
    if request.method == "POST":
+      
+
       transfer_form = TransferForm(request.POST)
       transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
       if transfer_form.is_valid():
@@ -291,3 +299,30 @@ def staffTransfers(request):
    }  
    
    return render(request, 'bank_app/staffTransfers.html', context)
+
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class TransferView(View):
+   queryset = Ledger.objects.all()
+
+   permission_classes = [permissions.IsAuthenticated]
+
+   test = "test"
+
+   def get(self, request, *args, **kwargs):
+      return HttpResponse(self.test)
+
+   def post(self, request, *args, **kwargs):
+
+      transfer_form = TransferForm(request.POST)
+      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
+      if transfer_form.is_valid():
+         credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
+         credit_text = transfer_form.cleaned_data['credit_text']
+         amount = transfer_form.cleaned_data['amount']
+         transfer = ExternalLedger.transfer(amount, credit_account, credit_text, False)
+         print(transfer)
+         return HttpResponse(self.test)
+      
+      return HttpResponse(status=400)
