@@ -115,6 +115,30 @@ def loan_details(request, transaction_id):
    }
    return render(request, 'bank_app/loan_details.html', context)
 
+def send_request(request, url):
+   session = requests.session()
+
+   login_url = url + 'user/login/'
+   session.get(login_url)
+   csrf = session.cookies['csrftoken']
+
+   bank_auth = {
+      'user': 'laufey',
+      'password': 'password',
+      'csrfmiddlewaretoken' : csrf
+   }
+
+   response = session.post(url + 'user/login/', data=bank_auth)
+   print(response)
+   response.raise_for_status()
+   csrf = session.cookies['csrftoken']
+   
+   headers = { 'X-CSRFToken' : csrf, 'Referer': url }
+   response = session.post(url + 'external-transfer/', data=request.POST, headers=headers)
+   response.raise_for_status()
+
+   return response
+
 @login_required
 def transfer(request):
    if request.method == "POST":
@@ -133,9 +157,9 @@ def transfer(request):
             transfer = Ledger.transfer(amount, debit_account, debit_text, credit_account, credit_text)
             print(transfer)
          else:
-            r = requests.post(credit_transfer_path, auth=("laufey", "password"), data=request.POST)
+            r = send_request(request, credit_transfer_path)
+            #r = requests.post(credit_transfer_path, data=request.POST)
             print(credit_transfer_path)
-            print(r)
             if r.status_code == 200:
                transfer = ExternalLedger.transfer(amount, debit_account, debit_text, credit_bank_id)
                print(transfer)
@@ -302,7 +326,6 @@ def staffTransfers(request):
 
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class TransferView(View):
    queryset = Ledger.objects.all()
 

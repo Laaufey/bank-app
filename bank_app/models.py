@@ -103,7 +103,7 @@ class ExternalLedger(models.Model):
 
             if internal_transfer:
                amount = amount * -1
-            cls(amount=amount, transaction=uid, account=debit_account, text=debit_text,).save()
+            Ledger(amount=amount, transaction=uid, account=debit_account, text=debit_text,).save()
          else:
             print("Sorry")
       return uid

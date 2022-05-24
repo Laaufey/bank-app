@@ -3,14 +3,14 @@
     "model": "bank_app.bank",
     "fields": {
       "id": 1,
-      "transfer_path": "http://localhost:8000/external-transfer/"
+      "transfer_path": "http://127.0.0.1:8000/"
     }
   },
   {
     "model": "bank_app.bank",
     "fields": {
       "id": 2,
-      "transfer_path": "http://localhost:7000/external-transfer/"
+      "transfer_path": "http://127.0.0.1:7000/"
     }
   }
 ]
