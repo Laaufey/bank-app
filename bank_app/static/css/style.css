@@ -166,6 +166,7 @@ table td{
 /* LOGIN APP */
 .login_app{
   margin: 0 auto;
+  margin-top: 2rem;
   background-color: #0b45e6;
   border-radius: 30px;
   width: 40vw;

@@ -1,9 +1,11 @@
 from curses.ascii import FF
 from multiprocessing import context
+from tokenize import blank_re
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from .models import Account, Customer, Ledger
+import requests
+from .models import Account, Customer, Ledger, ExternalLedger, Bank
 from django.contrib.auth.models import User
 from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm
 from decimal import Decimal
@@ -52,6 +54,12 @@ def accounts(request):
 @login_required
 def loans(request):
    user=request.user
+   print(request.user.customer.customer_rank)
+   if not request.user.customer.customer_rank == "GOLD" and not request.user.customer.customer_rank == "silver":
+      context = {
+
+      }
+      return render(request, 'bank_app/loans.html', context)
    if request.method == "POST":
       loan_form = LoanForm(request.POST)
       loan_form.fields['account'].queryset = request.user.customer.accounts
@@ -100,7 +108,6 @@ def loan_details(request, transaction_id):
       'transactions':transactions,
       'accounts':Account.objects.all(),
       'loan_form':loan_form,
-
    }
    return render(request, 'bank_app/loan_details.html', context)
 
@@ -110,12 +117,44 @@ def transfer(request):
       transfer_form = TransferForm(request.POST)
       transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
       if transfer_form.is_valid():
+         credit_bank_id = transfer_form.cleaned_data['credit_bank']
+         credit_transfer_path = Bank.objects.get(pk=credit_bank_id).transfer_path
          debit_account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
          debit_text = transfer_form.cleaned_data['debit_text']
+         amount = transfer_form.cleaned_data['amount']
+
+         if credit_bank_id == 1:
+            credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
+            credit_text = transfer_form.cleaned_data['credit_text']
+            transfer = Ledger.transfer(amount, debit_account, debit_text, credit_account, credit_text)
+            print(transfer)
+         else:
+            r = requests.post(credit_transfer_path, auth=("laufey", "password"), data=request.POST)
+            if r.status_code == 200:
+               transfer = ExternalLedger.transfer(amount, debit_account, debit_text, credit_bank_id)
+               print(transfer)
+   else:
+      transfer_form = TransferForm()
+      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
+      print(transfer_form.fields['debit_account'].queryset)
+
+      # print(transfer_form.fields['debit_account'].queryset)
+   context = {
+      'transfer_form':transfer_form
+   }
+   return render(request, 'bank_app/transfer.html', context)
+
+
+@login_required
+def receive_external_transfer(request):
+   if request.method == "POST":
+      transfer_form = TransferForm(request.POST)
+      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
+      if transfer_form.is_valid():
          credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
          credit_text = transfer_form.cleaned_data['credit_text']
          amount = transfer_form.cleaned_data['amount']
-         transfer = Ledger.transfer(amount, debit_account, debit_text, credit_account, credit_text)
+         transfer = ExternalLedger.transfer(amount, credit_account, credit_text, False)
          print(transfer)
    else:
       transfer_form = TransferForm()
@@ -127,6 +166,8 @@ def transfer(request):
       'transfer_form':transfer_form
    }
    return render(request, 'bank_app/transfer.html', context)
+
+
 
 @login_required
 def profile(request):

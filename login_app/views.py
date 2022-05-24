@@ -1,9 +1,16 @@
+from hashlib import new
+from html import entities
 from multiprocessing import context
+from pydoc import cli
 from django.shortcuts import redirect, render, reverse
 from django.contrib.auth.models import User
 from twilio.rest import Client
 import pyqrcode
+import environ
 import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+import uuid
 from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.http import HttpResponseRedirect
 from bank_app.models import Customer
@@ -11,32 +18,30 @@ from bank_app.forms import createCustomer
 
 
 
-def verify(request):
-   url = pyqrcode.create('http://uca.edu')
-   url.svg('uca-url.svg', scale=8)
-   url.eps('uca-url.eps', scale=2)
-   print(url.terminal(quiet_zone=1))
-
+def add_verify(request):
+   account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
+   auth_token = 'f21a19d0cdcbe974515c8231b8f181f6'
+   service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
+   client = Client(account_sid, auth_token)
    if request.method == "POST":
-      # account_sid = os.environ['TWILIO_ACCOUNT_SID']
-      account_sid = os.environ['ACb82a519e91ea148938a5f8f69bd1d989']
-      auth_token = os.environ['TWILIO_AUTH_TOKEN']
-      client = Client(account_sid, auth_token)
+      print("POSTING")
+      if 'authenticate' in request.POST:
+         print("TOTP")
+         print(request.user.customer.totp_identity)
+         factor = client.verify.services(service_sid) \
+                              .entities(request.user.customer.totp_identity) \
+                              .factors(factor.secret) \
+                              .update(auth_payload=request.POST['totp_code'])
+         print(factor.status)
+         if factor.status == 'verified':
+            return HttpResponseRedirect(reverse('bank_app:home'))
+         else:
+            return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
+   return render(request, 'login_app/add_verify.html')
 
-      new_factor = client.verify \
-                        .services('Sparion') \
-                        .entities('TWILIO_SERVICE_SID') \
-                        .new_factors \
-                        .create(
-                              friendly_name="Taylor's Account Name",
-                              factor_type='totp'
-                        )
-
-      print(new_factor.binding)
-   context = {
-         'error': 'Not verified',
-      }
-   return render(request, 'login_app/verify.html', context)
+def verify(request):
+   
+   return render(request, 'login_app/verify.html')
 
 def login(request):
    context = {}
@@ -44,7 +49,6 @@ def login(request):
    if request.method == "POST":
       user = authenticate(request, username=request.POST['user'], password=request.POST['password'])
       print("hello user")
-      print(user.password)
       if user:
             request.session['pk'] = user.pk
             dj_login(request, user)
@@ -84,14 +88,40 @@ def sign_up(request):
             email=email, 
             password=password
       )
-      Customer.objects.create(user=user, phone_number=phone_number, customer_rank=customer_rank)
       if password == confirm_password:
-            if user:
-               return HttpResponseRedirect(reverse('login_app:login'))
-            else:
-               context = {
-                  'error': 'Could not create user account - please try again.'
-               }
+         enitity_id = uuid.uuid4()
+         Customer.objects.create(user=user, phone_number=phone_number, customer_rank=customer_rank, totp_identity=enitity_id)
+
+         if user:
+            env = environ.Env()
+            environ.Env.read_env()
+            account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
+            auth_token = 'f21a19d0cdcbe974515c8231b8f181f6'
+            service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
+            client = Client(account_sid, auth_token)
+
+            print("Hello enitity_id")
+            print(enitity_id)
+
+            new_factor = client.verify \
+                              .services(service_sid) \
+                              .entities(enitity_id) \
+                              .new_factors \
+                              .create(
+                                    friendly_name=f"{user.first_name}'s account",
+                                    factor_type='totp'
+                              )
+            print(new_factor.binding)
+            factor_obj = new_factor.binding
+
+            url = pyqrcode.create(factor_obj['uri'])
+            url.svg('static/login_app/authy-url.svg', scale=2)
+            # return HttpResponseRedirect(reverse('login_app:login'))
+            return render(request, 'login_app/add_verify.html')
+         else:
+            context = {
+               'error': 'Could not create user account - please try again.'
+            }
       else:
             context = {
                'error': 'Passwords did not match. Please try again.'
