@@ -129,7 +129,6 @@ def send_request(request, url):
    }
 
    response = session.post(url + 'user/login/', data=bank_auth)
-   print(response)
    response.raise_for_status()
    csrf = session.cookies['csrftoken']
    
@@ -163,31 +162,6 @@ def transfer(request):
             if r.status_code == 200:
                transfer = ExternalLedger.transfer(amount, debit_account, debit_text, credit_bank_id)
                print(transfer)
-   else:
-      transfer_form = TransferForm()
-      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
-      print(transfer_form.fields['debit_account'].queryset)
-
-      # print(transfer_form.fields['debit_account'].queryset)
-   context = {
-      'transfer_form':transfer_form
-   }
-   return render(request, 'bank_app/transfer.html', context)
-
-
-@login_required
-def receive_external_transfer(request):
-   if request.method == "POST":
-      
-
-      transfer_form = TransferForm(request.POST)
-      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
-      if transfer_form.is_valid():
-         credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
-         credit_text = transfer_form.cleaned_data['credit_text']
-         amount = transfer_form.cleaned_data['amount']
-         transfer = ExternalLedger.transfer(amount, credit_account, credit_text, False)
-         print(transfer)
    else:
       transfer_form = TransferForm()
       transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
@@ -325,7 +299,7 @@ def staffTransfers(request):
    return render(request, 'bank_app/staffTransfers.html', context)
 
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class TransferView(View):
    queryset = Ledger.objects.all()
 
