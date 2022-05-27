@@ -5,18 +5,29 @@
   <h3>Overview</h3>
   <div class="overview">
     <div>
-      <h5>Your debitcard</h5>
-      <div class="card">      
-        <div>
-          <p>Staða</p>
-          <p class="money green">10.000 kr.</p>
-        </div>
-        <div>
-          <p>Til ráðstöfunar</p>
-          <p class="money">10.000 kr.</p>
-        </div>
+      <h5>Your Debit card</h5>
+      {% for account in accounts %}
+        {% if account.user_id == user_id %}
+          {% if account.account_type == 'Debit Account' %}
+            <div class="card">      
+              <div>
+                <p>Staða</p>
+                <p class="money green">{{account.money}} kr.</p>
+              </div>
+              <div>
+                <p>Til ráðstöfunar</p>
+                <p class="money">{{account.money}} kr.</p>
+              </div>
+            </div>
+            <a href="">Transfer</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      <div class="card">
+        <img src="{% static 'images/debit-card.svg' %}" alt="" width="56">
+        <p>You can start to use your new Debit card today. </p>
       </div>
-      <a href="">Transfer</a>
+      <a href="">Apply for a card</a>
     </div>
     <div>
     <h5>Membership</h5>
@@ -30,14 +41,14 @@
     {% endfor %}
     </div>
     <div>
-        <h5>Credit card</h5>
-        <div class="card">
-          <img src="{% static 'images/credit-card-plane.svg' %}" alt="">
-          <p>It's good to be insured while traveling. </p>
-        </div>
-        <a href="">Apply for a card</a>
+      <h5>Credit card</h5>
+      <div class="card">
+        <img src="{% static 'images/credit-card-plane.svg' %}" alt="">
+        <p>It's good to be insured while traveling. </p>
+      </div>
+      <a href="">Apply for a card</a>
     </div>
-    <div>
+        <div>
       <h5>Unpaid bills</h5>
     </div>
   </div>

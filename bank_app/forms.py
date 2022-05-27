@@ -32,7 +32,7 @@ class UpdateUserForm(forms.ModelForm):
 class createAccount(forms.ModelForm):
   class Meta:
     model = Account
-    fields = ('title', 'user')
+    fields = ('title', 'user', 'account_type')
     # title = forms.CharField(max_length = 200)
     # user = forms.CharField(max_length=200)
 

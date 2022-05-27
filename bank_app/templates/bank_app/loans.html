@@ -21,7 +21,7 @@
 <div class="flex">
   <div>
     <h3>Your loans</h4>
-    <table class="account-table">
+    <!-- <table class="account-table">
       <tr class="account-titles">
         <th>Loan no.</th>
         <th>Loan taker</th>
@@ -52,6 +52,30 @@
         {% endfor %}
       {% endif %}
     {% endfor %}
+    </table> -->
+    <table class="account-table">
+      <tr class="account-titles">
+        <th>Loan no.</th>
+        <th>Loan taker</th>
+        <th>Loan type</th>
+        <th>Due date</th>
+        <th class="float-right">Remaining</th>
+      </tr>
+      {% for account in accounts %}
+      {% if account.user_id == user_id and account.account_type == 'Loan account' %}
+      <tr>
+        <td><a href="{% url 'bank_app:loan_details' account.id %}">{{ account.id }}</a></td>
+        <td>{{ user.customer.full_name }}</td>
+        <td>{{account.account_type}}</td>
+        <td>01.07.2022</td>
+        {% if account.money >= 0 %}
+        <td class="float-right">{{ account.money }} kr.</td>
+        {% else %}
+        <td class="red float-right">{{ account.money }} kr.</td> 
+        {% endif %}
+      </tr>
+      {% endif %}
+      {% endfor %}
     </table>
   </div>
   <div class="form loanform" >

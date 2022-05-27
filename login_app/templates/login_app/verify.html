@@ -6,9 +6,7 @@
    <form action="{% url 'login_app:verify' %}" method="POST">
 
          {% csrf_token %}
-         
-         <input type="number" name="code" placeholder="Code">
-
+         <input type="number" name="totp_code" placeholder="Code" id="totp_code">
          <button>Verify</button>
       </form>
    </div>

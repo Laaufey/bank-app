@@ -2,9 +2,10 @@
 {% block content %}
 <h2>Your accounts</h2>
 {% for account in accounts %}
-  {% if account.user_id == user_id %}
-  <h3>{{ account.title }} - {{ account.money }}kr</h3>
-  <table class="account-table">
+  {% if account.user_id == user_id and account.account_type != 'Loan account' %}
+  <div>
+  <h3><button id="{{account.id}}" onclick="showHide(`{{account.id}}`)">{{ account.title }} - {{ account.money }}kr</button></h3>
+  <table id="account-table-{{account.id}}" class="account-table hidden">
     <tr class="account-titles">
       <th>Date</th>
       <th>Account</th>
@@ -43,6 +44,7 @@
 
     {% endfor %}
   </table>
+</div>
   {% endif %}
 {% endfor %}
 

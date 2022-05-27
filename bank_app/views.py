@@ -14,6 +14,7 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from twilio.rest import Client
 
 def index(request):
    return render(request, 'bank_app/index.html')
@@ -23,7 +24,6 @@ def index(request):
 def home(request):
    user = request.user
    if request.method == "POST":
-      print("Hello")
       account_form = createAccount(request.POST)
       if account_form.is_valid():
          Account.objects.create(user=User.objects.get(pk=user.id), title=account_form.cleaned_data['title'])
@@ -58,7 +58,6 @@ def accounts(request):
 @login_required
 def loans(request):
    user=request.user
-   print(request.user.customer.customer_rank)
    if not request.user.customer.customer_rank == "GOLD" and not request.user.customer.customer_rank == "silver":
       context = {
 
@@ -69,12 +68,13 @@ def loans(request):
       loan_form.fields['account'].queryset = request.user.customer.accounts
       if loan_form.is_valid():
          amount = loan_form.cleaned_data['amount']
+         loan_account = Account.objects.create(user=request.user, title="Loan Account", account_type='Loan Account')
          account = Account.objects.get(pk=loan_form.cleaned_data['account'].pk)
-         bank = Account.objects.get(pk=11) #The Bank
+         # bank = Account.objects.get(pk=11) #The Bank
          debit_text = loan_form.cleaned_data['debit_text']
          credit_text = loan_form.cleaned_data['credit_text']
          is_loan = True
-         transfer = Ledger.transfer(amount, bank, debit_text, account, credit_text, is_loan)
+         transfer = Ledger.transfer(amount, loan_account, debit_text, account, credit_text, is_loan)
          print(transfer)
          return HttpResponseRedirect('/loans')
    else:
@@ -90,26 +90,30 @@ def loans(request):
    return render(request, 'bank_app/loans.html', context)
 
 @login_required
-def loan_details(request, transaction_id):
-   transactions = Ledger.objects.filter(transaction_id=transaction_id)
-   print(transactions)
+def loan_details(request, id):
+   account = Account.objects.filter(id=id)
+   # transactions = Ledger.objects.filter(transaction_id=transaction_id)
+   # print(transactions)
    if request.method == "POST":
       loan_form = LoanForm(request.POST)
       loan_form.fields['account'].queryset = request.user.customer.accounts
       if loan_form.is_valid():
          amount = loan_form.cleaned_data['amount']
          customer_account = Account.objects.get(pk=loan_form.cleaned_data['account'].pk)
-         account = Account.objects.get(pk=11) #The Bank
+         # account = Account.objects.get(pk=11) #The Bank
+         account = Account.objects.get(pk=id)
          debit_text = loan_form.cleaned_data['debit_text']
          credit_text = loan_form.cleaned_data['credit_text']
          transfer = Ledger.transfer(amount, customer_account, debit_text, account, credit_text)
          print(transfer)
+         return HttpResponseRedirect(f'/loan_details/{id}')
    else:
       loan_form = LoanForm()
       loan_form.fields['account'].queryset = request.user.customer.accounts
 
    context = {
-      'transactions':transactions,
+      # 'transactions':transactions,
+      'account':account,
       'accounts':Account.objects.all(),
       'loan_form':loan_form,
    }
@@ -142,7 +146,7 @@ def send_request(request, url):
 def transfer(request):
    if request.method == "POST":
       transfer_form = TransferForm(request.POST)
-      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
+      transfer_form.fields['debit_account'].queryset = Account.objects.filter(user=request.user,account_type = 'Savings account' or 'Debit card' or 'Credit card')
       if transfer_form.is_valid():
          credit_bank_id = transfer_form.cleaned_data['credit_bank']
          credit_transfer_path = Bank.objects.get(pk=credit_bank_id).transfer_path
@@ -155,6 +159,19 @@ def transfer(request):
             credit_text = transfer_form.cleaned_data['credit_text']
             transfer = Ledger.transfer(amount, debit_account, debit_text, credit_account, credit_text)
             print(transfer)
+            account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
+            auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
+            client = Client(account_sid, auth_token)
+            number = Customer.objects.get(user_id=credit_account.user_id).phone_number
+            message = client.messages \
+                           .create(
+                                 body=f"You got sent {amount} kr. from {request.user}. Explaination:{debit_text}",
+                                 from_='+14782092875',
+                                 to=f"{number}"
+                           )
+            print(message.sid)
+            print(Customer.objects.get(user_id=credit_account.user_id).phone_number)
+            return HttpResponseRedirect('/transfer')
          else:
             r = send_request(request, credit_transfer_path)
             #r = requests.post(credit_transfer_path, data=request.POST)
@@ -164,8 +181,7 @@ def transfer(request):
                print(transfer)
    else:
       transfer_form = TransferForm()
-      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
-      print(transfer_form.fields['debit_account'].queryset)
+      transfer_form.fields['debit_account'].queryset = Account.objects.filter(user=request.user,account_type = 'Savings account' or 'Debit card' or 'Credit card')
 
       # print(transfer_form.fields['debit_account'].queryset)
    context = {
@@ -178,7 +194,6 @@ def transfer(request):
 @login_required
 def profile(request):
    user = request.user
-   print(user)
    update_user_form = UpdateUserForm(instance=user)
    if request.method == "POST":
       update_user_form = UpdateUserForm(request.POST, instance=user)
@@ -228,7 +243,6 @@ def staffAccountView(request):
 def staffNewCustomer(request):
    assert request.user.is_staff, 'Not for regular customers, only for admin'
    if request.method == "POST":
-      print("NEW CUSTOMER ALERT")
       customer_form = createCustomer(request.POST)
       user_form = createUser(request.POST)
       if user_form.is_valid() and customer_form.is_valid():
@@ -245,7 +259,7 @@ def staffNewCustomer(request):
             last_name=last_name, 
             email=email, 
             password=password)
-         print(f'Username: {username} - email: {email}')
+         print(f'New customer with username: {username} and email: {email}')
          Customer.objects.create(user=user, phone_number=phone_number, customer_rank=customer_rank)
    context = {
       'customer_form':createCustomer,
@@ -259,11 +273,9 @@ def staffNewAccount(request):
    assert request.user.is_staff, 'Not for regular customers, only for admin'
    user=request.user
    if request.method == "POST":
-      print("Hello")
       account_form = createAccount(request.POST)
       if account_form.is_valid():
          Account.objects.create(user=account_form.cleaned_data['user'], title=account_form.cleaned_data['title'])
-         print(user)
    context = {
          'account_form':createAccount,
          'accounts':Account.objects.all(),
@@ -277,17 +289,12 @@ def staffTransfers(request):
    assert request.user.is_staff, 'Not for regular customers, only for admin'
    transfer_form = TransferForm()
    # transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
-   print(request.user.customer.accounts)
-   print(transfer_form.fields['debit_account'])
    if request.method == "POST":
       transfer_form = TransferForm(request.POST)
       if transfer_form.is_valid():
          debit_account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'])
          credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
          amount = transfer_form.cleaned_data['amount']
-         print(debit_account.pk)
-         # print(credit_account)
-         print(amount)
          transfer = Ledger.transfer(amount, debit_account, credit_account)
          print(transfer)
    else:

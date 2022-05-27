@@ -19,9 +19,21 @@ class Store(models.Model):
       return f'{self.pk}'
 
 class Account(models.Model):
+   LOANACCOUNT = 'Loan account'
+   CREDITCARD = 'Credit card'
+   DEBITCARD = 'Debit card'
+   SAVINGSACCOUNT = 'Savings account'
+
+   ACCOUNTS = [
+      (LOANACCOUNT, 'Loan Account'),
+      (DEBITCARD, 'Debit Card Account'),
+      (CREDITCARD, 'Credit Card Account'),
+      (SAVINGSACCOUNT, 'Savings Account'),
+   ]
+
    user = models.ForeignKey(User, on_delete=models.CASCADE)
    title = models.CharField(max_length=200)
-   balance = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+   account_type = models.CharField(choices=ACCOUNTS, default=SAVINGSACCOUNT, max_length=20)
    last_update = models.DateTimeField(auto_now_add=True, null=True)
 
    class Meta:
@@ -37,7 +49,13 @@ class Account(models.Model):
 
    
    def __str__(self):
-      return f"{self.pk} - {self.title} - {self.user} - {self.money}"
+      return f"{self.pk} | {self.title} | {self.account_type} | {self.money} kr."
+      
+class AccountRequest(models.Model):
+   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   title = models.CharField(max_length=200)
+   def __str__(self):
+      return f"{self.pk} | {self.title} | {self.user}"
 
 class Customer(models.Model):
    BASIC = 'basic'

@@ -4,8 +4,9 @@ const c3 = document.getElementById("currency-three");
 const amount1 = document.getElementById("amount-one");
 const amount2 = document.getElementById("amount-two");
 
+// myHeaders.append("apikey", "o0K8l61XHvgWeVO2T2eg4bLre2bTysMh"); //laaufey
 var myHeaders = new Headers();
-myHeaders.append("apikey", "o0K8l61XHvgWeVO2T2eg4bLre2bTysMh");
+myHeaders.append("apikey", "PtCaN8XaWyHbv3BNijh9yNAvNC3izl8Y"); //laufeycat
 
 var requestOptions = {
   method: 'GET',
@@ -50,6 +51,14 @@ async function calculate(from, amount){
   c3.value = eur_rounded;
 }
 
+document.getElementById("account").addEventListener("click", showHide);
+function showHide(account_id){
+  console.log(document.querySelector(`[id='${account_id}']`))
+  console.log("Show Hide")
+  const table = document.querySelector(`[id='account-table-${account_id}']`)
+  console.log(document.querySelector(`[id='account-table-${account_id}']`))
+  table.classList.toggle("hidden")
+}
 
 // fetch(`https://api.apilayer.com/exchangerates_data/convert?to=DKK&from=ISK&amount=${curr1}`, requestOptions)
 //   .then(response => response.json())

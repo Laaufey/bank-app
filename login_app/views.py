@@ -2,6 +2,7 @@ from hashlib import new
 from html import entities
 from multiprocessing import context
 from pydoc import cli
+import secrets
 from django.shortcuts import redirect, render, reverse
 from django.contrib.auth.models import User
 from twilio.rest import Client
@@ -20,49 +21,108 @@ from bank_app.forms import createCustomer
 
 def add_verify(request):
    account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-   auth_token = 'f21a19d0cdcbe974515c8231b8f181f6'
+   auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
    service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
-   client = Client(account_sid, auth_token)
+   # client = Client(account_sid, auth_token)
+   # if request.method == "POST":
+   #    print("POSTING")
+   #    if 'authenticate' in request.POST:
+   #       print("TOTP")
+   #       print(request.user.customer.totp_identity)
+   #       factor = client.verify.services(service_sid) \
+   #                            .entities(request.user.customer.totp_identity) \
+   #                            .factors(factor.secret) \
+   #                            .update(auth_payload=request.POST['totp_code'])
+   #       print(factor.status)
+   #       if factor.status == 'verified':
+   #          return HttpResponseRedirect(reverse('bank_app:home'))
+   #       else:
+   #          return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
    if request.method == "POST":
-      print("POSTING")
-      if 'authenticate' in request.POST:
-         print("TOTP")
-         print(request.user.customer.totp_identity)
-         factor = client.verify.services(service_sid) \
+
+      client = Client(account_sid, auth_token)
+
+      factors = client.verify.services(service_sid) \
+                           .entities(request.user.customer.totp_identity) \
+                           .factors \
+                           .list(limit=20)
+
+      for record in factors:
+         user_factor = record.sid
+
+      factor = client.verify.services(service_sid) \
                               .entities(request.user.customer.totp_identity) \
-                              .factors(factor.secret) \
+                              .factors(user_factor) \
                               .update(auth_payload=request.POST['totp_code'])
-         print(factor.status)
-         if factor.status == 'verified':
-            return HttpResponseRedirect(reverse('bank_app:home'))
-         else:
-            return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
+      if factor.status == 'verified':
+         return HttpResponseRedirect(reverse('login_app:login'))
+         # return render(request, 'login_app/login.html')
+      else:
+         return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
    return render(request, 'login_app/add_verify.html')
 
 def verify(request):
-   
+   print('Here Now')
+   if request.method == "POST":
+      print("here hello")
+      # account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
+      # auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
+      # service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
+      
+      # client = Client(account_sid, auth_token)
+
+      # factors = client.verify.services(service_sid) \
+      #                      .entities(request.user.customer.totp_identity) \
+      #                      .factors \
+      #                      .list(limit=20)
+
+      # for record in factors:
+      #    user_factor = record.sid
+      #    print(factors)
+      # print(request.user.customer.totp_identity)
+      # print("user factor")
+      # print(record)
+      # print(user_factor)
+      # challenge = client.verify \
+      #                   .services(service_sid) \
+      #                   .entities(request.user.customer.totp_identity) \
+      #                   .challenges \
+      #                   .create(
+      #                      auth_payload=request.POST['totp_code'],
+      #                      factor_sid=request.user.customer.totp_identity
+      #                   )
+
+      # print(challenge.status)
+      # if challenge.status == 'verified':
+      return HttpResponseRedirect(reverse('bank_app:home'))
+      #    # return render(request, 'bank_app/home.html')
+      # else:
+      #    return render(request, 'login_app/verify.html', {'error':'Could not verify, please try again'})
    return render(request, 'login_app/verify.html')
 
 def login(request):
    context = {}
-
-   if request.method == "POST":
-      user = authenticate(request, username=request.POST['user'], password=request.POST['password'])
-      print("hello user")
-      if user:
-            request.session['pk'] = user.pk
-            dj_login(request, user)
-            return HttpResponseRedirect(reverse('bank_app:home'))
-      else:
+   if 'login' in request.POST:
+      if request.method == "POST":
+         print("HERE LOGIN")
+         user = authenticate(request, username=request.POST['user'], password=request.POST['password'])
+         print("hello user")
+         if user:
+               request.session['pk'] = user.pk
+               dj_login(request, user)
+               return HttpResponseRedirect(reverse('login_app:verify'))
+               # return render(request, 'home.html')
+         else:
             context = {
-               'error': 'Wrong username or password.'
-            }
+                  'error': 'Wrong username or password.'
+               }
    return render(request, 'login_app/login.html', context)
 
 
 def logout(request):
    dj_logout(request)
-   return render(request, 'login_app/login.html')
+   # return render(request, 'login_app/login.html')
+   return HttpResponseRedirect(reverse('login_app:login'))
 
 
 def password_reset(request):
@@ -91,12 +151,12 @@ def sign_up(request):
       if password == confirm_password:
          enitity_id = uuid.uuid4()
          Customer.objects.create(user=user, phone_number=phone_number, customer_rank=customer_rank, totp_identity=enitity_id)
-
+ 
          if user:
             env = environ.Env()
             environ.Env.read_env()
             account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-            auth_token = 'f21a19d0cdcbe974515c8231b8f181f6'
+            auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
             service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
             client = Client(account_sid, auth_token)
 
@@ -112,6 +172,7 @@ def sign_up(request):
                                     factor_type='totp'
                               )
             print(new_factor.binding)
+            print(new_factor.sid)
             factor_obj = new_factor.binding
 
             url = pyqrcode.create(factor_obj['uri'])

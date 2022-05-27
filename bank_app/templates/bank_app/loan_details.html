@@ -1,12 +1,83 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
 
-<h1>Your loan details</h1>
+<h2>Loans</h2>
+{% for a in account %}
+{{a}}
+<ul class="profile-nav">
+  <a href="">
+    <li>
+      Information
+    </li>
+  </a>
+  <a href="">
+    <li>
+      Transfer history
+    </li>
+  </a>
+</ul>
 
-{% for transaction in transactions %}
+<div class="info-loan-details">
+<div>
+  <div>
+    <h5>Loan taker</h5>
+    <p>{{a.user.customer.full_name}}</p>
+  </div>
+  <div>
+    <h5>Loan taker ID</h5>
+    <p>{{a.user.id}}</p>
+  </div>
+  <div>
+    <h5>Loan number</h5>
+    <p>{{a.id}}</p>
+  </div>
+  <div>
+    <h5>Loan type</h5>
+    <p>{{a.account_type}}</p>
+  </div>
+  <div>
+    <h5>Loan status</h5>
+    <p>{{a.money}}</p>
+  </div>
+  <div>
+    <h5>Fixed interest rates</h5>
+    <p>0.00%</p>
+</div>
+</div>
+<div>
+  <div>
+    <h5>Loan taker</h5>
+    <p>{{a.user.customer.full_name}}</p>
+  </div>
+  <div>
+    <h5>Loan taker ID</h5>
+    <p>{{a.user.id}}</p>
+  </div>
+  <div>
+    <h5>Loan number</h5>
+    <p>{{a.id}}</p>
+  </div>
+  <div>
+    <h5>Loan type</h5>
+    <p>{{a.account_type}}</p>
+  </div>
+  <div>
+    <h5>Loan status</h5>
+    <p>{{a.money}}</p>
+  </div>
+  <div>
+    <h5>Fixed interest rates</h5>
+    <p>0.00%</p>
+</div>
+</div>
+</div>
+
+
+{% endfor %}
+<!-- {% for transaction in transactions %}
 <li>{{transaction.amount}}</li>
 <li>{{transaction.account.title}}</li>
-{% endfor %}
+{% endfor %} -->
 <div class="form">
   <form action="" method="POST">
     {% csrf_token %}

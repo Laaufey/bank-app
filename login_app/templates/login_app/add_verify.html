@@ -4,7 +4,7 @@
 {% load static %}
 <div class="login_app">
   <h1>Verify</h1>
-  <form action="{% url 'login_app:verify' %}" method="POST">
+  <form action="{% url 'login_app:login' %}" method="POST">
 
         {% csrf_token %}
         <img src="{% static 'login_app/authy-url.svg' %}" alt="">
