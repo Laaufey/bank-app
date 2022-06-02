@@ -6,11 +6,20 @@
   text-decoration: none;
   box-sizing: border-box;
 }
+:root{
+  --sparion-blue: #0b45e6;
+  --sparion-pink: #fe5a88;
+  --sparion-white: #ffffff;
+  --sparion-light-grey: #e8e8e8;
+  --sparion-lighter-gray: #f5f5f5;
+  --sparion-table-border: #e8e8e8;
+  --sparion-table-color: #f6f7f7;
+}
 .hidden{
   display: none;
 }
 body{
-  background-color: #f5f5f5;
+  background-color: var(--sparion-lighter-gray);
 }
 .logo2{
   background-image: url("/static/blomid@3x2.svg");
@@ -19,7 +28,7 @@ body{
   margin-right: 2rem;
 }
 .blue{
-  background-color: #0b45e6;
+  background-color: var(--sparion-blue);
 }
 .gold{
   color: gold;
@@ -43,10 +52,10 @@ body{
   display: block;
   padding: 22px 22px;
   margin-top: .75rem;
-  color:white;
+  color:var(--sparion-white);
 }
 .ul2 button{
-  color: white;
+  color: var(--sparion-white);
   background-color: rgba(255, 255, 255, 0.2);
   margin-top: .85rem;
   padding: .75rem;
@@ -56,7 +65,7 @@ body{
   cursor: pointer;
 }
 .ul2 button:hover{
-  background-color: #fe5a88;
+  background-color: var(--sparion-pink);
 }
 .hello{
   margin-top: 1rem;
@@ -81,7 +90,7 @@ body{
   display: none !important;
   border: 1px #e3e3e3 solid;
   border-radius: 4px;
-  background-color: white;
+  background-color: var(--sparion-white);
   width: 25vw;
   display: flex;
   flex-flow: column;
@@ -130,7 +139,7 @@ body{
   font-family: Arial, Helvetica, sans-serif;
   color:#4b565c;
   border: 1px #e3e3e3 solid;
-  background-color: #fff;
+  background-color: var(--sparion-white);
   border-radius: 4px;
   /* margin-right: 1rem; */
   /* width: 60vw; */
@@ -142,7 +151,7 @@ body{
 h2{
   margin-top: 1.8rem;
   padding-bottom: 1.2rem;
-  border-bottom: 3px solid #fe5a88;
+  border-bottom: 3px solid var(--sparion-pink);
   font-size: 26px;
   font-weight: 600;
 }
@@ -164,7 +173,7 @@ h2{
   width: 50%;
 }
 .overview a{
-  color: #0b45e6;
+  color: var(--sparion-blue);
 }
 .money{
   font-size: 18px;
@@ -177,7 +186,7 @@ h2{
   color: red;
 }
 .gray{
-  background-color: #f5f5f5;
+  background-color: var(--sparion-lighter-gray);
 }
 
 h3{
@@ -197,7 +206,7 @@ p{
 }
 
 .info-loan-details{
-  background-color: #f5f5f5;
+  background-color: var(--sparion-lighter-gray);
   display: flex;
   gap: 1.5rem;
   padding: 1rem;
@@ -229,7 +238,7 @@ h3>button{
 }
 tr{
   display: table-row;
-  border-bottom: 1px solid rgb(231, 231, 231);
+  border-bottom: 1px solid var(--sparion-table-border);
 }
 th{
   text-align: left;
@@ -239,8 +248,8 @@ td{
   display: table-cell;
   padding: .7rem 1rem;
 }
-tr:nth-child(even) {background-color: #f6f7f7}
-tr:nth-child(odd) {background-color: #FFF}
+tr:nth-child(even) {background-color: var(--sparion-table-color)}
+tr:nth-child(odd) {background-color: var(--sparion-white)}
 
 /* LOANS */
 
@@ -264,7 +273,7 @@ tr:nth-child(odd) {background-color: #FFF}
   display: flex;
   justify-content: space-evenly;
   margin-top: 1.7rem;
-  border-bottom: 3px solid #e3e3e3;
+  border-bottom: 3px solid var(--sparion-light-grey);
 }
 
 .profile-nav>a{
@@ -313,7 +322,7 @@ select{
   color: #4b565c;
 }
 .grayform{
-  background-color: #f5f5f5;
+  background-color: var(--sparion-lighter-gray);
   border: 1px solid #e3e3e3;
   border-radius: 4px;
   min-height: 20px;
@@ -339,8 +348,8 @@ select{
 }
 
 button{
-  background-color: #0b45e6;
-  color: white;
+  background-color: var(--sparion-blue);
+  color: var(--sparion-white);
 }
 
 /* FOOTER */

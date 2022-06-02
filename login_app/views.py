@@ -1,14 +1,13 @@
-from hashlib import new
-from html import entities
+
 from multiprocessing import context
 from pydoc import cli
-import secrets
+
 from django.shortcuts import redirect, render, reverse
 from django.contrib.auth.models import User
-from twilio.rest import Client
 import pyqrcode
-import environ
 import os
+import environ
+from twilio.rest import Client
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 import uuid
@@ -18,11 +17,19 @@ from bank_app.models import Customer
 from bank_app.forms import createCustomer
 
 
+env = environ.Env()
+environ.Env.read_env()
+
+
+
+
 
 def add_verify(request):
-   account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-   auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
-   service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
+   print("Add_verify view")
+   print(request.user)
+   # account_sid = env("TWILIO_ACCOUNT_SID")
+   # auth_token = env('TWILIO_AUTH_TOKEN')
+   # service_sid = env('TWILIO_SERVICE_SID')
    # client = Client(account_sid, auth_token)
    # if request.method == "POST":
    #    print("POSTING")
@@ -38,36 +45,36 @@ def add_verify(request):
    #          return HttpResponseRedirect(reverse('bank_app:home'))
    #       else:
    #          return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
-   if request.method == "POST":
+   # if request.method == "POST":
 
-      client = Client(account_sid, auth_token)
+   #    client = Client(account_sid, auth_token)
 
-      factors = client.verify.services(service_sid) \
-                           .entities(request.user.customer.totp_identity) \
-                           .factors \
-                           .list(limit=20)
+   #    factors = client.verify.services(service_sid) \
+   #                         .entities(request.user.customer.totp_identity) \
+   #                         .factors \
+   #                         .list(limit=20)
 
-      for record in factors:
-         user_factor = record.sid
+   #    for record in factors:
+   #       user_factor = record.sid
 
-      factor = client.verify.services(service_sid) \
-                              .entities(request.user.customer.totp_identity) \
-                              .factors(user_factor) \
-                              .update(auth_payload=request.POST['totp_code'])
-      if factor.status == 'verified':
-         return HttpResponseRedirect(reverse('login_app:login'))
-         # return render(request, 'login_app/login.html')
-      else:
-         return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
+   #    factor = client.verify.services(service_sid) \
+   #                            .entities(request.user.customer.totp_identity) \
+   #                            .factors(user_factor) \
+   #                            .update(auth_payload=request.POST['totp_code'])
+   #    if factor.status == 'verified':
+   #       return HttpResponseRedirect(reverse('login_app:login'))
+   #       # return render(request, 'login_app/login.html')
+   #    else:
+   #       return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
    return render(request, 'login_app/add_verify.html')
 
 def verify(request):
    print('Here Now')
    if request.method == "POST":
       print("here hello")
-      # account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-      # auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
-      # service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
+      # account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+      # auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+      # service_sid = os.environ.get('TWILIO_SERVICE_SID')
       
       # client = Client(account_sid, auth_token)
 
@@ -128,7 +135,6 @@ def logout(request):
 def password_reset(request):
    pass
 
-
 def sign_up(request):
    context = {}
    if request.method == "POST":
@@ -154,10 +160,12 @@ def sign_up(request):
  
          if user:
             env = environ.Env()
-            environ.Env.read_env()
-            account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-            auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
-            service_sid = 'VAdd029dd54480699c06979fb9da1b9eb1'
+            env.read_env()
+            account_sid = env("TWILIO_ACCOUNT_SID")
+            auth_token = env('TWILIO_AUTH_TOKEN')
+            service_sid = env('TWILIO_SERVICE_SID')
+            print("here")
+            print(account_sid, account_sid, service_sid)
             client = Client(account_sid, auth_token)
 
             print("Hello enitity_id")
@@ -178,7 +186,7 @@ def sign_up(request):
             url = pyqrcode.create(factor_obj['uri'])
             url.svg('static/login_app/authy-url.svg', scale=2)
             # return HttpResponseRedirect(reverse('login_app:login'))
-            return render(request, 'login_app/add_verify.html')
+            return render(request, 'login_app/add_verify.html', {'signupuser':user})
          else:
             context = {
                'error': 'Could not create user account - please try again.'

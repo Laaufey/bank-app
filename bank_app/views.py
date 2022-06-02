@@ -175,6 +175,7 @@ def transfer(request):
          else:
             r = send_request(request, credit_transfer_path)
             #r = requests.post(credit_transfer_path, data=request.POST)
+            
             print(credit_transfer_path)
             if r.status_code == 200:
                transfer = ExternalLedger.transfer(amount, debit_account, debit_text, credit_bank_id)
@@ -306,7 +307,7 @@ def staffTransfers(request):
    return render(request, 'bank_app/staffTransfers.html', context)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+
 class TransferView(View):
    queryset = Ledger.objects.all()
 
