@@ -150,60 +150,59 @@ def add_verify(request, pk):
 
 def login(request):
    context = {}
-   if 'login' in request.POST:
-      if request.method == "POST":
-         print("HERE LOGIN")
+   if request.method == "POST":
+      if 'login' in request.POST:
          user = authenticate(request, username=request.POST['user'], password=request.POST['password'])
-         print("hello user")
          if user:
                request.session['pk'] = user.pk
                dj_login(request, user)
                return HttpResponseRedirect(reverse('login_app:verify'))
                # return render(request, 'home.html')
          else:
-            context = {
-                  'error': 'Wrong username or password.'
-               }
+            context = {'error': 'Wrong username or password.'}
    return render(request, 'login_app/login.html', context)
 
 def verify(request):
+   context = {}
    print('Here Now')
+   print("here hello")
+   env = environ.Env()
+   environ.Env.read_env()
+   account_sid = env("TWILIO_ACCOUNT_SID")
+   auth_token = env('TWILIO_AUTH_TOKEN')
+   service_sid = env('TWILIO_SERVICE_SID')
+   client = Client(account_sid, auth_token)
+   
+   factors = (
+      client.verify.services(service_sid)
+      .entities(request.user.customer.totp_identity)
+      .factors.list(limit=20)
+   )
+
+   for record in factors:
+      user_factor = record.sid
+
    if request.method == "POST":
-      print("here hello")
-      # account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-      # auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-      # service_sid = os.environ.get('TWILIO_SERVICE_SID')
-      
-      # client = Client(account_sid, auth_token)
+      if "verify" in request.POST:
+         print("verify in Post request")
+         totp_code = request.POST["totp_code"]
 
-      # factors = client.verify.services(service_sid) \
-      #                      .entities(request.user.customer.totp_identity) \
-      #                      .factors \
-      #                      .list(limit=20)
+         challenge = (
+               client.verify.services(service_sid)
+               .entities(request.user.customer.totp_identity)
+               .challenges.create(auth_payload=totp_code, factor_sid=user_factor)
+         )
 
-      # for record in factors:
-      #    user_factor = record.sid
-      #    print(factors)
-      # print(request.user.customer.totp_identity)
-      # print("user factor")
-      # print(record)
-      # print(user_factor)
-      # challenge = client.verify \
-      #                   .services(service_sid) \
-      #                   .entities(request.user.customer.totp_identity) \
-      #                   .challenges \
-      #                   .create(
-      #                      auth_payload=request.POST['totp_code'],
-      #                      factor_sid=request.user.customer.totp_identity
-      #                   )
+         print("Challenge Status: ", challenge.status)
 
-      # print(challenge.status)
-      # if challenge.status == 'verified':
-      return HttpResponseRedirect(reverse('bank_app:home'))
-      #    # return render(request, 'bank_app/home.html')
-      # else:
-      #    return render(request, 'login_app/verify.html', {'error':'Could not verify, please try again'})
-   return render(request, 'login_app/verify.html')
+         if challenge.status == "approved":
+            print("Challenge Approved")
+            return HttpResponseRedirect(reverse('bank_app:home'))
+         else:
+            print("Challenge Not Approved")
+            context = {"error": "Wrong code, please try again"}
+
+   return render(request, 'login_app/verify.html', context)
 
 def logout(request):
    dj_logout(request)
