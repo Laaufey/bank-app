@@ -190,8 +190,6 @@ def transfer(request):
    }
    return render(request, 'bank_app/transfer.html', context)
 
-
-
 @login_required
 def profile(request):
    user = request.user
@@ -208,8 +206,7 @@ def profile(request):
    }
    return render(request, 'bank_app/profile.html', context)
 
-# Admin 
-
+# Admin
 @login_required
 def staff(request):
    assert request.user.is_staff, 'Not for regular customers, only for admin'
@@ -222,16 +219,32 @@ def staff(request):
 def staffCustomerView(request):
    user = request.user
    assert request.user.is_staff, 'Not for regular customers, only for admin'
-   if request.method == "POST":
-      update_customer_form = UpdateCustomerForm(request.POST, instance=request.user.customer)
-      if update_customer_form.is_valid:
-         update_customer_form.save()
    context = {
-      'update_customer_form':UpdateCustomerForm,
       'user_id':user.id,
       'customers':Customer.objects.all(),
    }
    return render(request, 'bank_app/staffCustomerView.html', context)
+
+@login_required
+def staff_customer_details(request, id):
+   assert request.user.is_staff, 'Not for regular customers, only for admin'
+   user = User.objects.get(pk=id)
+   customer = Customer.objects.get(user_id=user.id)
+   update_customer_form = UpdateCustomerForm(instance=customer)
+   update_user_form = UpdateUserForm(instance=user)
+   if request.method == "POST":
+         update_customer_form = UpdateCustomerForm(request.POST, instance=customer)
+         update_user_form = UpdateUserForm(request.POST, instance=user)
+         if update_customer_form.is_valid:
+            update_customer_form.save()
+         if update_user_form.is_valid:
+            update_user_form.save()
+   context = {
+      'customer': user,
+      'update_customer_form':update_customer_form,
+      'update_user_form':update_user_form,
+   }
+   return render(request, 'bank_app/staff_customer_details.html', context)
 
 @login_required
 def staffAccountView(request):
@@ -240,6 +253,7 @@ def staffAccountView(request):
       'accounts':Account.objects.all(),
    }
    return render(request, 'bank_app/staffAccountView.html', context)
+
 @login_required
 def staffNewCustomer(request):
    assert request.user.is_staff, 'Not for regular customers, only for admin'

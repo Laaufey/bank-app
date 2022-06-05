@@ -14,9 +14,10 @@ class createCustomer(forms.ModelForm):
     fields = ('phone_number', 'customer_rank')
 
 class UpdateCustomerForm(forms.ModelForm):
+
   class Meta:
     model = Customer
-    fields = ('user', 'phone_number', 'customer_rank')
+    fields = ('phone_number', 'customer_rank')
 
 class createUser(forms.ModelForm):
   class Meta:

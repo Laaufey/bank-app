@@ -15,23 +15,13 @@
       {% for customer in customers %}
       <tr>
         <td>{{ customer.user.id }}</td>
-        <td><a href="">{{ customer.full_name }}</a></td>
+        <td><a href="{% url 'bank_app:staff_customer_details' customer.pk %}">{{ customer.full_name }}</a></td>
         <td>{{ customer.customer_rank }}</td>
         <td>{{ customer.customer_rank }}</td>
       </tr>
       {% endfor %}
     </table>
     
-  </div>
-  <div class="form">
-    <h3>Change memberships</h3>
-    <div class="grayform">
-      <form action="" method="POST">
-        {% csrf_token %}
-        {{ update_customer_form }}
-        <input type="submit" value="Update customer" name="" id="">
-      </form>
-    </div>
   </div>
 </div>
 {% endblock %}

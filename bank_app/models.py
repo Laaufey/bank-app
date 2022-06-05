@@ -6,9 +6,6 @@ from django.db.models.query import QuerySet
 from decimal import Decimal
 import uuid
 
-import requests
-
-
 class Store(models.Model):
    @classmethod
    @property
@@ -51,11 +48,6 @@ class Account(models.Model):
    def __str__(self):
       return f"{self.pk} | {self.title} | {self.account_type} | {self.money} kr."
       
-class AccountRequest(models.Model):
-   user = models.ForeignKey(User, on_delete=models.CASCADE)
-   title = models.CharField(max_length=200)
-   def __str__(self):
-      return f"{self.pk} | {self.title} | {self.user}"
 
 class Customer(models.Model):
    BASIC = 'basic'

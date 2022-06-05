@@ -1,6 +1,8 @@
 
 from multiprocessing import context
+from platform import java_ver
 from pydoc import cli
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.shortcuts import redirect, render, reverse
 from django.contrib.auth.models import User
@@ -8,6 +10,7 @@ import pyqrcode
 import os
 import environ
 from twilio.rest import Client
+from twilio.base.exceptions import TwilioRestException
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 import uuid
@@ -172,35 +175,58 @@ def verify(request):
    auth_token = env('TWILIO_AUTH_TOKEN')
    service_sid = env('TWILIO_SERVICE_SID')
    client = Client(account_sid, auth_token)
-   
-   factors = (
-      client.verify.services(service_sid)
-      .entities(request.user.customer.totp_identity)
-      .factors.list(limit=20)
-   )
 
-   for record in factors:
-      user_factor = record.sid
+   try:
+      factors = (
+         client.verify.services(service_sid)
+         .entities(request.user.customer.totp_identity)
+         .factors.list(limit=20)
+      )
 
-   if request.method == "POST":
-      if "verify" in request.POST:
-         print("verify in Post request")
-         totp_code = request.POST["totp_code"]
+      for record in factors:
+         user_factor = record.sid
 
-         challenge = (
-               client.verify.services(service_sid)
-               .entities(request.user.customer.totp_identity)
-               .challenges.create(auth_payload=totp_code, factor_sid=user_factor)
+      if request.method == "POST":
+         if "verify" in request.POST:
+            print("verify in Post request")
+            totp_code = request.POST["totp_code"]
+
+            challenge = (
+                  client.verify.services(service_sid)
+                  .entities(request.user.customer.totp_identity)
+                  .challenges.create(auth_payload=totp_code, factor_sid=user_factor)
+            )
+
+            print("Challenge Status: ", challenge.status)
+
+            if challenge.status == "approved":
+               print("Challenge Approved")
+               return HttpResponseRedirect(reverse('bank_app:home'))
+            else:
+               print("Challenge Not Approved")
+               context = {"error": "Wrong code, please try again"}
+   except Exception as error:
+      error_string = str(error)
+      print("ERERER", error_string)
+      user = request.user
+      print("new user: ", user)
+      new_factor = (
+         client.verify.services(service_sid)
+         .entities(user.customer.totp_identity)
+         .new_factors.create(
+            friendly_name=f"{user.first_name}'s account", factor_type="totp"
          )
+      )
+      print(new_factor.binding)
+      factor_obj = new_factor.binding
 
-         print("Challenge Status: ", challenge.status)
+      url = pyqrcode.create(factor_obj['uri'])
+      url.svg('static/login_app/authy-url.svg', scale=2)
+      # return HttpResponseRedirect(reverse('login_app:login'))
+      return HttpResponseRedirect(
+         reverse("login_app:add_verify", kwargs={"pk": user.pk})
+      )
 
-         if challenge.status == "approved":
-            print("Challenge Approved")
-            return HttpResponseRedirect(reverse('bank_app:home'))
-         else:
-            print("Challenge Not Approved")
-            context = {"error": "Wrong code, please try again"}
 
    return render(request, 'login_app/verify.html', context)
 

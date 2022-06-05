@@ -1,0 +1,17 @@
+{% extends 'bank_app/base/base2.html' %} 
+{% block content %}
+<h2>{{ customer.customer.full_name }}</h2>
+<div class="flex">
+  <div class="form">
+    <h3>Update {{ customer.first_name }}'s personal information </h3>
+    <div class="grayform">
+      <form action="" method="POST">
+        {% csrf_token %}
+        {{ update_user_form }}
+        {{ update_customer_form }}
+        <input type="submit" value="Update Customer" name="" id="">
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
