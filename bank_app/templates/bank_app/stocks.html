@@ -1,0 +1,55 @@
+{% extends 'bank_app/base/base3.html' %} 
+{% block content %}
+<h2>Investments</h2>
+
+
+<div class="flex">
+  <div>
+    <h3>Stocks</h4>
+
+        <form action="/stocks/" method="post">
+            {% csrf_token %}
+            {{ ticker_form }}
+            <input type="submit" value="Submit">
+        </form>
+        
+        <table class="account-table">
+            <tr class="account-titles">
+                <th>Company</th>
+                <th>Ticker</th>
+                <th>Price</th>
+            </tr>
+            <tr>
+                <td>Apple Inc</td>
+                <td>AAPL</td>
+                <td>{{ apple_price.close }}</td>
+            </tr>
+            <tr>
+                <td>Google</td>
+                <td>GOOGL</td>
+                <td>{{ google_price.close }}</td>
+            </tr>
+            <tr>
+                <td>Microsoft</td>
+                <td>MSFT</td>
+                <td>{{ microsoft_price.close }}</td>
+            </tr>
+            <tr>
+                <td>Amazon</td>
+                <td>AMZN</td>
+                <td>{{ amazon_price.close }}</td>
+            </tr>
+            <tr>
+                <td>Tesla</td>
+                <td>TSLA</td>
+                <td>{{ tesla_price.close }}</td>
+            </tr>
+        </table>
+
+ 
+    
+    </div>
+  </div>
+
+{% endblock %}
+ 

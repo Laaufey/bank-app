@@ -1,0 +1,20 @@
+{% extends 'bank_app/base/base3.html' %} 
+{% block content %}
+<h2>Investments</h2>
+
+
+<div class="flex">
+  <div>
+    <h3>Stocks</h3>
+    <h3>{{ meta.name }} ({{ ticker }}) </h3>
+    <p>Description: {{meta.description}}</p>
+    <div class="flex">
+        <p>Open: {{ price.open }}</p>
+        <p>High: {{ price.high }}</p>
+        <p>Low: {{ price.low }}</p>
+        <p>Close: {{ price.close }}</p>
+    </div>
+    </div>
+  </div>
+
+{% endblock %}
