@@ -8,12 +8,12 @@
 
         {% csrf_token %}
         <img src="{% static 'login_app/authy-url.svg' %}" alt="">
-        <input type="number" name="add_totp_code" placeholder="Code">
+        <input type="number" name="add_totp_code" id="add_topt_code" placeholder="Code">
 
-        <button name="add_verify">Verify</button>
+        <button type="submit" name="add_verify">Verify</button>
       </form>
+      {% if error %}
+          {{ error }}
+      {% endif %}
   </div>
-  {% if error %}
-      {{ error }}
-  {% endif %}
 {% endblock %}
