@@ -3,7 +3,7 @@
 {% block content %}
 <div class="login_app">
   <h1>Sign Up</h1>
-  <form action="{% url 'login_app:sign_up' %}" method="POST">
+  <form action="." method="POST">
     {% csrf_token %}
     <input type="text" name="first_name" placeholder="First Name" />
     <input type="text" name="last_name" placeholder="Last Name" />
@@ -16,7 +16,7 @@
       name="confirm_password"
       placeholder="Confirm Password"
     />
-    <button>Sign Up</button>
+    <button name="signup">Sign Up</button>
   </form>
 </div>
 {% if error %} 

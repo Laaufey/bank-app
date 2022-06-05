@@ -160,7 +160,7 @@ def transfer(request):
             transfer = Ledger.transfer(amount, debit_account, debit_text, credit_account, credit_text)
             print(transfer)
             account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-            auth_token = 'cc4f9cbd6758a73fb66c89a195b9dfa9'
+            auth_token = 'd90ca1391c2a1ba2c0d9c38036787d1a'
             client = Client(account_sid, auth_token)
             number = Customer.objects.get(user_id=credit_account.user_id).phone_number
             message = client.messages \

@@ -3,11 +3,11 @@
 {% block content %}
 <div class="login_app">
    <h1>Verify</h1>
-   <form action="{% url 'login_app:verify' %}" method="POST">
+   <form action="." method="POST">
 
          {% csrf_token %}
          <input type="number" name="totp_code" placeholder="Code" id="totp_code">
-         <button>Verify</button>
+         <button name="verify">Verify</button>
       </form>
    </div>
    {% if error %}
