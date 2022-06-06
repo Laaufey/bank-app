@@ -16,7 +16,7 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
   def post(self, request):
     accounts = Account.objects.all()
     id = request.query_params.get("id")
-    transaction_id = request.query_params.get("transaction_id")
+    transaction = request.query_params.get("transaction")
     amount = int(request.query_params.get("amount"))
     text = request.query_params.get("text") 
     account = accounts.get(pk=id)
@@ -29,7 +29,7 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
         debit_text=text,
         credit_account=account,
         credit_text=text,
-        transaction_id=transaction_id,
+        transaction=transaction,
       )
       return Response({"info": "Transaction went through"}, status=200)
     except Exception:

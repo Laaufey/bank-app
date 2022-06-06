@@ -182,7 +182,7 @@ def transfer(request):
 
          # External bank transfers
          elif credit_bank_id == 2:
-            transaction_id = uuid.uuid4()
+            transaction = uuid.uuid4()
             account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
             bank = Account.objects.get(pk=11)
             credit_text = transfer_form.cleaned_data['credit_text']
@@ -190,7 +190,7 @@ def transfer(request):
             print("id: ", id)
             # transfer = Ledger.externalTransfer(amount, debit_account, debit_text, bank, credit_text)
             find_account_url = ("http://127.0.0.1:7000/api/v1/get-account/?id=%s" % id)
-            transfer_url = f"http://127.0.0.1:7000/api/v1/external-transfer/?transaction_id={transaction_id}&amount={amount}&text={credit_text}&id={id}"
+            transfer_url = f"http://127.0.0.1:7000/api/v1/external-transfer/?transaction={transaction}&amount={amount}&text={credit_text}&id={id}"
             print("find account url: ", find_account_url)
             print("transfer url: ", transfer_url)
             account_response = requests.get(find_account_url)
@@ -206,7 +206,7 @@ def transfer(request):
                         debit_text=debit_text,
                         credit_account=bank,
                         credit_text=credit_text,
-                        transaction_id=transaction_id
+                        transaction=transaction
                      )
                   except Exception: 
                      print("External transfer error")

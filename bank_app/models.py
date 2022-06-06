@@ -95,17 +95,17 @@ class Ledger(models.Model):
       return uid
    
    @classmethod
-   def externalTransfer(cls, amount, debit_account, debit_text, credit_account, credit_text, transaction_id):
+   def externalTransfer(cls, amount, debit_account, debit_text, credit_account, credit_text, transaction):
       assert amount >= 0
       with transaction.atomic():
          if debit_account.money >= amount or debit_account.title == "OPS Bank Account":
             # transaction_id = Store.uid
-            cls(amount=-amount, transaction=transaction_id, account=debit_account, text=debit_text,).save()
-            cls(amount=amount, transaction=transaction_id, account=credit_account, text=credit_text).save()
+            cls(amount=-amount, transaction=transaction, account=debit_account, text=debit_text,).save()
+            cls(amount=amount, transaction=transaction, account=credit_account, text=credit_text).save()
             print("External Transaction went through")
          else:
             print("External Transfer did not go through")
-      return transaction_id
+      return transaction
 
    def __str__(self):
       return f'{self.amount} -- {self.transaction} -- {self.account} -- {self.text}'
