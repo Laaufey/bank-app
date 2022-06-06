@@ -1,6 +1,7 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from . import views
+from .api import GetAccount
 
 app_name = 'bank_app'
 
@@ -21,4 +22,7 @@ urlpatterns = [
    path('staffNewCustomer', views.staffNewCustomer, name='staffNewCustomer'),
    path('staffNewAccount', views.staffNewAccount, name='staffNewAccount'),
    path('staffTransfers', views.staffTransfers, name='staffTransfers'),
+
+   path("api/v1/get-account/", GetAccount.as_view()),
+   path("api/v1/rest-auth/", include('dj_rest_auth.urls')),
    ]

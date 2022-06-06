@@ -172,14 +172,19 @@ def transfer(request):
             print(message.sid)
             print(Customer.objects.get(user_id=credit_account.user_id).phone_number)
             return HttpResponseRedirect('/transfer')
-         else:
-            r = send_request(request, credit_transfer_path)
+         elif credit_bank_id == 2:
+            credit_account = Account.objects.get(pk=11)
+            credit_text = transfer_form.cleaned_data['credit_text']
+            id = request.POST["credit_account"]
+            print("id: ", id)
+            # r = send_request(request, credit_transfer_path)
             #r = requests.post(credit_transfer_path, data=request.POST)
-            
-            print(credit_transfer_path)
-            if r.status_code == 200:
-               transfer = ExternalLedger.transfer(amount, debit_account, debit_text, credit_bank_id)
-               print(transfer)
+            # print(credit_transfer_path)
+            # if r.status_code == 200:
+            url = ("http://127.0.0.1:8000/api/v1/get-account/id=%s" % id)
+            print("url: ", url)
+            transfer = Ledger.externalTransfer(amount, debit_account, debit_text, credit_account, credit_text)
+            print(transfer)
    else:
       transfer_form = TransferForm()
       transfer_form.fields['debit_account'].queryset = Account.objects.filter(user=request.user,account_type = 'Savings account' or 'Debit card' or 'Credit card')
