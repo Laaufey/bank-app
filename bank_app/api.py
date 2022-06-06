@@ -22,7 +22,7 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
     account = accounts.get(pk=id)
 
     try: 
-      bank_account = account.get(title="OPS Bank Account")
+      bank_account = account.get(title="Bank OPS Account")
       Ledger.externalTransfer(
         amount=amount,
         debit_account=bank_account,

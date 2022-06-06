@@ -184,7 +184,7 @@ def transfer(request):
          elif credit_bank_id == 2:
             transaction = uuid.uuid4()
             account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
-            bank = Account.objects.get(pk=11)
+            bank = Account.objects.get(title="Bank IPO Account")
             credit_text = transfer_form.cleaned_data['credit_text']
             id = request.POST["credit_account"]
             print("id: ", id)
