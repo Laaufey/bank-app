@@ -1,6 +1,6 @@
 from rest_framework import generics
 from rest_framework.response import Response
-from .serializers import GetAccountSerializer
+from .serializers import GetAccountSerializer, ExternalTransferSerializer
 from .models import Account, Ledger
 
 class GetAccount(generics.ListCreateAPIView):
@@ -19,10 +19,11 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
     transaction = request.query_params.get("transaction")
     amount = int(request.query_params.get("amount"))
     text = request.query_params.get("text") 
-    account = accounts.get(pk=account)
+    account = accounts.get(pk=id)
+    serializer = ExternalTransferSerializer(account, many=False)
 
     try: 
-      bank_account = account.get(title="Bank OPS Account")
+      bank_account = accounts.get(title="Bank OPS Account")
       Ledger.externalTransfer(
         amount=amount,
         debit_account=bank_account,
@@ -31,7 +32,6 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
         credit_text=text,
         transaction=transaction,
       )
-      return Response({"info": "Transaction went through"}, status=200)
+      return Response(data=serializer.data, status=200)
     except Exception as error:
-
       return Response({error}, status=500)

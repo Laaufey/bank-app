@@ -185,12 +185,12 @@ def transfer(request):
             transaction = uuid.uuid4()
             account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
             bank = Account.objects.get(title="Bank IPO Account")
-            credit_text = transfer_form.cleaned_data['credit_text']
+            text = transfer_form.cleaned_data['credit_text']
             id = request.POST["credit_account"]
             print("id: ", id)
             # transfer = Ledger.externalTransfer(amount, debit_account, debit_text, bank, credit_text)
             find_account_url = ("http://127.0.0.1:7000/api/v1/get-account/?id=%s" % id)
-            transfer_url = f"http://127.0.0.1:7000/api/v1/external-transfer/?account={id}&transaction={transaction}&amount={amount}&text={credit_text}"
+            transfer_url = f"http://127.0.0.1:7000/api/v1/external-transfer/?id={id}&transaction={transaction}&amount={amount}&text={text}"
             print("find account url: ", find_account_url)
             print("transfer url: ", transfer_url)
             account_response = requests.get(find_account_url)
@@ -199,6 +199,7 @@ def transfer(request):
                # print(transfer)
                transfer_response = requests.post(transfer_url)
                if transfer_response.ok:
+                  print("response ok")
                   try:
                      Ledger.externalTransfer(
                         amount=amount,
