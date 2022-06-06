@@ -10,8 +10,8 @@ class Command(BaseCommand):
         bank_user = User.objects.create_user('bank', email='', password='bankpassword')
         bank_user.is_active = False
         bank_user.save()
-        ipo_account = Account.objects.create(user=bank_user, account_name='Bank IPO Account')
-        ops_account = Account.objects.create(user=bank_user, account_name='Bank OPS Account')
+        ipo_account = Account.objects.create(user=bank_user, title='Bank IPO Account')
+        ops_account = Account.objects.create(user=bank_user, title='Bank OPS Account')
         Ledger.transfer(
             10_000_000,
             ipo_account, # debit
