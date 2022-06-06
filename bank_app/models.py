@@ -98,7 +98,7 @@ class Ledger(models.Model):
    def externalTransfer(cls, amount, debit_account, debit_text, credit_account, credit_text, transaction_id):
       assert amount >= 0
       with transaction.atomic():
-         if debit_account.money >= amount:
+         if debit_account.money >= amount or debit_account.title == "OPS Bank Account":
             # transaction_id = Store.uid
             cls(amount=-amount, transaction=transaction_id, account=debit_account, text=debit_text,).save()
             cls(amount=amount, transaction=transaction_id, account=credit_account, text=credit_text).save()
