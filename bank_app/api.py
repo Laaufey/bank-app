@@ -19,7 +19,7 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
     transaction = request.query_params.get("transaction")
     amount = int(request.query_params.get("amount"))
     text = request.query_params.get("text") 
-    account = accounts.get(pk=id)
+    account = accounts.get(pk=account)
 
     try: 
       bank_account = account.get(title="Bank OPS Account")
