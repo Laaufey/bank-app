@@ -47,8 +47,8 @@ class TransferForm(forms.Form):
 
   def clean(self):
       super().clean()
-      credit_account = self.cleaned_data.get('credit_account')
-      Account.objects.get(pk=credit_account)
+      # credit_account = self.cleaned_data.get('credit_account')
+      # Account.objects.get(pk=credit_account)
       return self.cleaned_data
 
 

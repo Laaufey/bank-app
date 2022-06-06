@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import View
 import requests
+import environ
+import uuid
 from .models import Account, Customer, Ledger, ExternalLedger, Bank
 from django.contrib.auth.models import User
 from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm
@@ -144,23 +146,28 @@ def send_request(request, url):
 
 @login_required
 def transfer(request):
+   
    if request.method == "POST":
       transfer_form = TransferForm(request.POST)
       transfer_form.fields['debit_account'].queryset = Account.objects.filter(user=request.user,account_type = 'Savings account' or 'Debit card' or 'Credit card')
       if transfer_form.is_valid():
          credit_bank_id = transfer_form.cleaned_data['credit_bank']
-         credit_transfer_path = Bank.objects.get(pk=credit_bank_id).transfer_path
-         debit_account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
-         debit_text = transfer_form.cleaned_data['debit_text']
+         # credit_transfer_path = Bank.objects.get(pk=credit_bank_id).transfer_path
          amount = transfer_form.cleaned_data['amount']
+         debit_text = transfer_form.cleaned_data['debit_text']
+         credit_text = transfer_form.cleaned_data['credit_text']
+         
 
+         # Internal bank transfers
          if credit_bank_id == 1:
+            debit_account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
             credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
-            credit_text = transfer_form.cleaned_data['credit_text']
             transfer = Ledger.transfer(amount, debit_account, debit_text, credit_account, credit_text)
             print(transfer)
-            account_sid = 'ACb82a519e91ea148938a5f8f69bd1d989'
-            auth_token = 'd90ca1391c2a1ba2c0d9c38036787d1a'
+            env = environ.Env()
+            environ.Env.read_env()
+            account_sid = env("TWILIO_ACCOUNT_SID")
+            auth_token = env('TWILIO_AUTH_TOKEN')
             client = Client(account_sid, auth_token)
             number = Customer.objects.get(user_id=credit_account.user_id).phone_number
             message = client.messages \
@@ -172,19 +179,46 @@ def transfer(request):
             print(message.sid)
             print(Customer.objects.get(user_id=credit_account.user_id).phone_number)
             return HttpResponseRedirect('/transfer')
+
+         # External bank transfers
          elif credit_bank_id == 2:
-            credit_account = Account.objects.get(pk=11)
+            transaction_id = uuid.uuid4()
+            account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
+            bank = Account.objects.get(pk=11)
             credit_text = transfer_form.cleaned_data['credit_text']
             id = request.POST["credit_account"]
             print("id: ", id)
+            # transfer = Ledger.externalTransfer(amount, debit_account, debit_text, bank, credit_text)
+            find_account_url = ("http://127.0.0.1:7000/api/v1/get-account/?id=%s" % id)
+            transfer_url = f"http://127.0.0.1:7000/api/v1/external-transfer/?transaction_id={transaction_id}&amount={amount}&text={credit_text}&id={id}"
+            print("find account url: ", find_account_url)
+            print("transfer url: ", transfer_url)
+            account_response = requests.get(find_account_url)
+            if account_response.ok:
+               print("Found the account")
+               # print(transfer)
+               transfer_response = requests.post(transfer_url)
+               if transfer_response.ok:
+                  try:
+                     Ledger.externalTransfer(
+                        amount=amount,
+                        debit_account=account,
+                        debit_text=debit_text,
+                        credit_account=bank,
+                        credit_text=credit_text,
+                        transaction_id=transaction_id
+                     )
+                  except Exception: 
+                     print("External transfer error")
+
+               # return HttpResponseRedirect('/transfer')
             # r = send_request(request, credit_transfer_path)
             #r = requests.post(credit_transfer_path, data=request.POST)
             # print(credit_transfer_path)
             # if r.status_code == 200:
-            url = ("http://127.0.0.1:8000/api/v1/get-account/id=%s" % id)
-            print("url: ", url)
-            transfer = Ledger.externalTransfer(amount, debit_account, debit_text, credit_account, credit_text)
-            print(transfer)
+            # Check if account 
+            else:
+               print("Account not found")
    else:
       transfer_form = TransferForm()
       transfer_form.fields['debit_account'].queryset = Account.objects.filter(user=request.user,account_type = 'Savings account' or 'Debit card' or 'Credit card')
