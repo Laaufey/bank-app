@@ -20,7 +20,6 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
     amount = int(request.query_params.get("amount"))
     text = request.query_params.get("text") 
     account = accounts.get(pk=id)
-    serializer = ExternalTransferSerializer(account, many=False)
 
     try: 
       bank_account = accounts.get(title="Bank OPS Account")
@@ -32,6 +31,6 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
         credit_text=text,
         transaction=transaction,
       )
-      return Response(data=serializer.data, status=200)
+      return Response({"info": "Transaction went through"}, status=200)
     except Exception as error:
       return Response({error}, status=500)
