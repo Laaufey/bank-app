@@ -135,5 +135,17 @@ class ExternalLedger(models.Model):
       return f'{self.amount} -- {self.transaction} -- {self.account} -- {self.text}'
 
 class Bank(models.Model):
+
    id = models.IntegerField(primary_key=True)
    transfer_path = models.CharField(max_length=255)
+
+class StockHoldings(models.Model):
+   holding_id = models.IntegerField(primary_key=True)
+   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   company = models.CharField(max_length=255)
+   ticker = models.CharField(max_length=5)
+   shares = models.IntegerField()
+   bought_at = models.FloatField()
+
+   def __str__(self):
+      return f'{self.holding_id} | {self.company} | no. of shares: {self.shares}'

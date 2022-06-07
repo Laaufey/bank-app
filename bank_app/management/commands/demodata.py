@@ -12,6 +12,7 @@ class Command(BaseCommand):
         bank_user.save()
         ipo_account = Account.objects.create(user=bank_user, title='Bank IPO Account')
         ops_account = Account.objects.create(user=bank_user, title='Bank OPS Account')
+        stock_account = Account.objects.create(user=bank_user, title='Bank Stock Account')
         Ledger.transfer(
             10_000_000,
             ipo_account, # debit

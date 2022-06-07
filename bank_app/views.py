@@ -8,15 +8,17 @@ from django.views import View
 import requests
 import environ
 import uuid
-from .models import Account, Customer, Ledger, ExternalLedger, Bank
+from .models import Account, Customer, Ledger, ExternalLedger, StockHoldings
 from django.contrib.auth.models import User
-from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm
+from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, SellStockForm, StockForm
 from decimal import Decimal
 from rest_framework import permissions
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from twilio.rest import Client
+from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price, get_tesla_info
+
 
 def index(request):
    return render(request, 'bank_app/index.html')
@@ -182,6 +184,13 @@ def transfer(request):
 
          # External bank transfers
          elif credit_bank_id == 2:
+            env = environ.Env()
+            environ.Env.read_env()
+            bank_auth_key_1 = env("BANK_AUTH_KEY_1")
+            headers = {
+               'Content-Type': 'application/json',
+               'Authorization': bank_auth_key_1
+            }
             transaction_id = uuid.uuid4()
             account = Account.objects.get(pk=transfer_form.cleaned_data['debit_account'].pk)
             bank = Account.objects.get(title="Bank IPO Account")
@@ -197,7 +206,7 @@ def transfer(request):
             if account_response.ok:
                print("Found the account")
                # print(transfer)
-               transfer_response = requests.post(transfer_url)
+               transfer_response = requests.post(transfer_url, headers=headers)
                print(transfer_response)
                if transfer_response.ok:
                   print("response ok")
@@ -246,6 +255,104 @@ def profile(request):
       'customers':Customer.objects.all()
    }
    return render(request, 'bank_app/profile.html', context)
+
+# Stocks
+
+@login_required
+def stocks(request):
+   user = request.user
+   if request.method == 'POST':
+      form = TickerForm(request.POST)
+      if form.is_valid():
+         ticker = request.POST['ticker']
+         return HttpResponseRedirect(ticker)
+   else:
+      form = TickerForm()
+      context = {
+         'apple_price': get_apple_price(),
+         'google_price': get_google_price(),
+         'microsoft_price': get_microsoft_price(),
+         'amazon_price': get_amazon_price(),
+         'tesla_price': get_tesla_price(),
+         'tesla_info': get_tesla_info(),
+         'ticker_form': form,
+         'stock_holdings': StockHoldings.objects.all()
+      }
+
+   return render(request, 'bank_app/stocks.html', context)
+
+
+@login_required
+def ticker(request, tid):
+   price_data = get_price_data(tid)
+   meta_data = get_meta_data(tid)
+
+   if request.method == "POST":
+      buy_stock_form = StockForm(request.POST)
+      sell_stock_form = SellStockForm(request.POST)
+      sell_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+      buy_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+
+      if buy_stock_form.is_valid():
+            stock_value = price_data['close']
+            # company_name = meta_data['name']
+            stock_amount = buy_stock_form.cleaned_data['stock_amount']
+            amount_transfered = stock_value * stock_amount
+            debit_account = buy_stock_form.cleaned_data['debit_account']
+            credit_account = Account.objects.get(title='Bank Stock Account')
+            text = "buy stocks"
+
+            stock_holding = StockHoldings.objects.create(
+               user=request.user, company="Microsoft", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
+
+            transfer = Ledger.transfer(
+               amount_transfered, debit_account, text, credit_account, text)
+            print("AMOUNT", amount_transfered)
+            print(stock_holding)
+            print(transfer)
+            return HttpResponseRedirect('/stocks')
+
+      if sell_stock_form.is_valid():
+            stock_value = price_data['close']
+            stock_amount = StockHoldings.objects.get(
+            sell_stock_form.cleaned_data['stock_holdings'])
+            print(stock_amount)
+            amount_transfered = stock_value * stock_amount
+            debit_account = Account.objects.get(title='Bank Stock Account')
+            credit_account = sell_stock_form.cleaned_data['debit_account']
+            text = "sell stocks"
+
+            stock_holding = StockHoldings.objects.create(
+               user=request.user, company="Apple", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
+
+            transfer = Ledger.transfer(
+            amount_transfered, debit_account, text, credit_account, text)
+            print("AMOUNT", amount_transfered)
+            print(stock_holding)
+            print(transfer)
+            return HttpResponseRedirect('/stocks')
+   else:
+      sell_stock_form = SellStockForm()
+      buy_stock_form = StockForm()
+      buy_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+      sell_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+      sell_stock_form.fields['stock_holdings'].queryset = StockHoldings.objects.filter(
+            user=request.user)
+
+   context = {
+      'ticker': tid,
+      'meta': meta_data,
+      'price': price_data,
+      'buy_stock_form': buy_stock_form,
+      'sell_stock_form': sell_stock_form,
+   }
+
+   return render(request, 'bank_app/ticker.html', context)
+
 
 # Admin
 @login_required
