@@ -2,7 +2,7 @@ import requests
 
 headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Token d85a9d229a18b1b2f940b84c9e4c8c00c8474faa'
+    'Authorization': 'Token 027f024b315bd88f5f5329fac6bbba81829411aa'
 }
 
 
@@ -46,3 +46,9 @@ def get_tesla_price():
     url = 'https://api.tiingo.com/tiingo/daily/tsla/prices'
     response = requests.get(url, headers=headers)
     return response.json()[0]
+
+
+def get_tesla_info():
+    url = 'https://api.tiingo.com/tiingo/daily/tsla'
+    response = requests.get(url, headers=headers)
+    return response.json()

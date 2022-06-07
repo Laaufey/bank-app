@@ -1,19 +1,39 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
+{% load static %}
+
 <h2>Investments</h2>
 
 
 <div class="flex">
   <div>
-    <h3>Stocks</h3>
     <h3>{{ meta.name }} ({{ ticker }}) </h3>
     <p>Description: {{meta.description}}</p>
-    <div class="flex">
-        <p>Open: {{ price.open }}</p>
-        <p>High: {{ price.high }}</p>
-        <p>Low: {{ price.low }}</p>
-        <p>Close: {{ price.close }}</p>
+    <div class="main-ticker-price"><h1>{{ price.close }}</h1> <h5 class="usd">USD</h5></div>
+    <div class="ticker-prices">
+        <div><p>Open: {{ price.open }}</p></div>
+        <div><p>High: {{ price.high }}</p></div>
+        <div><p>Low: {{ price.low }}</p></div>
     </div>
+
+    <form action="" method="post">
+      {% csrf_token %}
+      <!-- <label for="stock_amount">Number of shares</label>
+      {{ buy_stock_form.stock_amount }}
+      <label for="debit_account">Choose Payment Account</label>
+      {{ buy_stock_form.debit_account }} -->
+      {{ buy_stock_form }}
+      <input type="Submit" value="Buy {{ ticker }}" class="ticker-input">
+
+    </form>
+
+    <!-- <form action="" method="post" class="sell-stock-form">
+      {% csrf_token %}
+      {{ sell_stock_form }}
+      <input type="Submit" value="Sell {{ ticker }}" class="ticker-input"> -->
+
+    </form>
+
     </div>
   </div>
 

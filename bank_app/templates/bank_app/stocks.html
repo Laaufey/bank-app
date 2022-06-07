@@ -1,17 +1,22 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
+{% load static %}
 <h2>Investments</h2>
 
 
 <div class="flex">
   <div>
-    <h3>Stocks</h4>
-
-        <form action="/stocks/" method="post">
-            {% csrf_token %}
-            {{ ticker_form }}
-            <input type="submit" value="Submit">
-        </form>
+      <div class="stocks">
+        <h3>Stocks</h3>
+            <div class="ticker-container">
+            <form action="/stocks/" method="post" class="ticker-form">
+                {% csrf_token %}
+                {{ ticker_form }}
+                <input type="submit" value="Search" class="ticker-input">
+            
+            </form>
+        </div>
+    </div>
         
         <table class="account-table">
             <tr class="account-titles">
@@ -22,34 +27,71 @@
             <tr>
                 <td>Apple Inc</td>
                 <td>AAPL</td>
-                <td>{{ apple_price.close }}</td>
+                <td>123</td>
+                <!-- <td>{{ apple_price.close }}</td> -->
+                <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Google</td>
                 <td>GOOGL</td>
-                <td>{{ google_price.close }}</td>
+                <td>123</td>
+                <!-- <td>{{ google_price.close }}</td> -->
+                <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Microsoft</td>
                 <td>MSFT</td>
-                <td>{{ microsoft_price.close }}</td>
+                <td>123</td>
+                <!-- <td>{{ microsoft_price.close }}</td> -->
+                <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Amazon</td>
                 <td>AMZN</td>
-                <td>{{ amazon_price.close }}</td>
+                <td>123</td>
+                <!-- <td>{{ amazon_price.close }}</td> -->
+                <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Tesla</td>
                 <td>TSLA</td>
-                <td>{{ tesla_price.close }}</td>
+                <td>123</td>
+                <!-- <td>{{ tesla_price.close }}</td> -->
+                <td>
+                    <a href="{% url 'bank_app:stocks' %}">
+                    <button class="buy-button">Buy</button>
+                </a>
+                </td>
             </tr>
         </table>
-
+        <h3>Your Investments</h3>
+        
+        <table class="account-table">
+            <tr class="account-titles">
+            
+              <th>Company</th>
+              <th>Ticker</th>
+              <th>No. of shares</th>
+              <th>Bought at</th>
+              <th>Market Value</th>
+              <th>Profit</th>
+            </tr>
+            <tr>
+                {% for stock in stock_holdings %}
+                <td>{{ stock.company }}</td>
+                <td>{{ stock.ticker }}</td>
+                <td>{{ stock.shares }}</td>
+                <td>{{ stock.bought_at }}</td>
+                <td>-</td>
+                <td>0</td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+       
  
     
     </div>
   </div>
 
-{% endblock %}
- 
+{% endblock %} 

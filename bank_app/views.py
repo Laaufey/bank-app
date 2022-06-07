@@ -1,21 +1,22 @@
 from curses.ascii import FF
 from multiprocessing import context
+from re import X
 from tokenize import blank_re
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import View
 import requests
-from .models import Account, Customer, Ledger, ExternalLedger, Bank
+from .models import Account, Customer, Ledger, ExternalLedger, Bank, StockHoldings
 from django.contrib.auth.models import User
-from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm
+from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, StockForm, SellStockForm
 from decimal import Decimal
 from rest_framework import permissions
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from twilio.rest import Client
-from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price
+from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price, get_tesla_info
 
 
 def index(request):
@@ -370,16 +371,7 @@ class TransferView(View):
 
 @login_required
 def stocks(request):
-    form = TickerForm()
-    context = {
-        'apple_price': get_apple_price(),
-        'google_price': get_google_price(),
-        'microsoft_price': get_microsoft_price(),
-        'amazon_price': get_amazon_price(),
-        'tesla_price': get_tesla_price(),
-        'ticker_form': form
-    }
-
+    user = request.user
     if request.method == 'POST':
         form = TickerForm(request.POST)
         if form.is_valid():
@@ -387,15 +379,87 @@ def stocks(request):
             return HttpResponseRedirect(ticker)
     else:
         form = TickerForm()
+        context = {
+            #   'apple_price': get_apple_price(),
+            #   'google_price': get_google_price(),
+            #   'microsoft_price': get_microsoft_price(),
+            #   'amazon_price': get_amazon_price(),
+            #   'tesla_price': get_tesla_price(),
+            'tesla_info': get_tesla_info(),
+            'ticker_form': form,
+            'stock_holdings': StockHoldings.objects.all()
+        }
 
     return render(request, 'bank_app/stocks.html', context)
 
 
 @login_required
 def ticker(request, tid):
-    context = {}
-    context['ticker'] = tid
-    context['meta'] = get_meta_data(tid)
-    context['price'] = get_price_data(tid)
-    print("GET PRICE DATA", get_price_data)
+    price_data = get_price_data(tid)
+    meta_data = get_meta_data(tid)
+
+    if request.method == "POST":
+        buy_stock_form = StockForm(request.POST)
+        sell_stock_form = SellStockForm(request.POST)
+        sell_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+        buy_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+
+        if buy_stock_form.is_valid():
+            stock_value = price_data['close']
+            # company_name = meta_data['name']
+            stock_amount = buy_stock_form.cleaned_data['stock_amount']
+            amount_transfered = stock_value * stock_amount
+            debit_account = buy_stock_form.cleaned_data['debit_account']
+            credit_account = Account.objects.get(title='Bank Stock Account')
+            text = "buy stocks"
+
+            stock_holding = StockHoldings.objects.create(
+                user=request.user, company="Microsoft", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
+
+            transfer = Ledger.transfer(
+                amount_transfered, debit_account, text, credit_account, text)
+            print("AMOUNT", amount_transfered)
+            print(stock_holding)
+            print(transfer)
+            return HttpResponseRedirect('/stocks')
+
+        if sell_stock_form.is_valid():
+            stock_value = price_data['close']
+            stock_amount = StockHoldings.objects.get(
+                sell_stock_form.cleaned_data['stock_holdings'])
+            print(stock_amount)
+            amount_transfered = stock_value * stock_amount
+            debit_account = Account.objects.get(title='Bank Stock Account')
+            credit_account = sell_stock_form.cleaned_data['debit_account']
+            text = "sell stocks"
+
+            stock_holding = StockHoldings.objects.create(
+                user=request.user, company="Apple", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
+
+            transfer = Ledger.transfer(
+                amount_transfered, debit_account, text, credit_account, text)
+            print("AMOUNT", amount_transfered)
+            print(stock_holding)
+            print(transfer)
+            return HttpResponseRedirect('/stocks')
+    else:
+        sell_stock_form = SellStockForm()
+        buy_stock_form = StockForm()
+        buy_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+        sell_stock_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+        sell_stock_form.fields['stock_holdings'].queryset = StockHoldings.objects.filter(
+            user=request.user)
+
+    context = {
+        'ticker': tid,
+        'meta': meta_data,
+        'price': price_data,
+        'buy_stock_form': buy_stock_form,
+        'sell_stock_form': sell_stock_form,
+    }
+
     return render(request, 'bank_app/ticker.html', context)

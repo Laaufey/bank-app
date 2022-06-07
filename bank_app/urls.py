@@ -12,6 +12,7 @@ urlpatterns = [
     path('transfer/', views.transfer, name='transfer'),
     path('stocks/', views.stocks, name='stocks'),
     path('stocks/<str:tid>', views.ticker, name='ticker'),
+    path('stocks/tsla/', views.ticker, name='ticker'),
     path('loans/', views.loans, name='loans'),
     path('loan_details/', views.loan_details, name='loan_details'),
     path('loan_details/<int:id>/', views.loan_details, name='loan_details'),

@@ -94,4 +94,23 @@ class UserForm(forms.ModelForm):
 
 
 class TickerForm(forms.Form):
-    ticker = forms.CharField(label='Ticker', max_length=5)
+    ticker = forms.CharField(label='', max_length=5)
+    ticker.widget.attrs['placeholder'] = "Search by ticker"
+
+
+class StockForm(forms.Form):
+    stock_amount = forms.IntegerField(label='Number of shares')
+    stock_amount.widget.attrs['placeholder'] = "Number of shares"
+    debit_account = forms.ModelChoiceField(
+        label='Choose payment account', queryset=Customer.objects.none())
+
+    def clean(self):
+        super().clean()
+        return self.cleaned_data
+
+
+class SellStockForm(forms.Form):
+    stock_holdings = forms.ModelChoiceField(
+        label='Choose Stock Holding', queryset=Customer.objects.none())
+    debit_account = forms.ModelChoiceField(
+        label='Receive payment account', queryset=Customer.objects.none())
