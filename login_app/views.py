@@ -115,40 +115,8 @@ def add_verify(request, pk):
          else:
                context = {"error": "Wrong code, please try again"}
    else:
-      print("NOT POST")
-         # pk = user.pk
-         # print("add_verify is in the request")
-         # factor = client.verify.services(service_sid) \
-         #                      .entities(request.user.customer.totp_identity) \
-         #                      .factors(factor.secret) \
-         #                      .update(auth_payload=request.POST['totp_code'])
-         # print("Factor status")
-         # print(factor.status)
-         # if factor.status == 'verified':
-         #    return HttpResponseRedirect(reverse('bank_app:home'))
-         # else:
-            # return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
-   # if request.method == "POST":
+      print("Something went wrong")
 
-   #    client = Client(account_sid, auth_token)
-
-   #    factors = client.verify.services(service_sid) \
-   #                         .entities(request.user.customer.totp_identity) \
-   #                         .factors \
-   #                         .list(limit=20)
-
-   #    for record in factors:
-   #       user_factor = record.sid
-
-   #    factor = client.verify.services(service_sid) \
-   #                            .entities(request.user.customer.totp_identity) \
-   #                            .factors(user_factor) \
-   #                            .update(auth_payload=request.POST['totp_code'])
-   #    if factor.status == 'verified':
-   #       return HttpResponseRedirect(reverse('login_app:login'))
-   #       # return render(request, 'login_app/login.html')
-   #    else:
-   #       return render(request, 'login_app/add_verify.html', {'error':'Could not verify, please try again'})
    return render(request, 'login_app/add_verify.html', context)
 
 def login(request):
@@ -167,8 +135,6 @@ def login(request):
 
 def verify(request):
    context = {}
-   print('Here Now')
-   print("here hello")
    env = environ.Env()
    environ.Env.read_env()
    account_sid = env("TWILIO_ACCOUNT_SID")
@@ -196,20 +162,17 @@ def verify(request):
                   .entities(request.user.customer.totp_identity)
                   .challenges.create(auth_payload=totp_code, factor_sid=user_factor)
             )
-
-            print("Challenge Status: ", challenge.status)
-
             if challenge.status == "approved":
                print("Challenge Approved")
+               
                return HttpResponseRedirect(reverse('bank_app:home'))
             else:
                print("Challenge Not Approved")
                context = {"error": "Wrong code, please try again"}
    except Exception as error:
       error_string = str(error)
-      print("ERERER", error_string)
+      print(error_string)
       user = request.user
-      print("new user: ", user)
       new_factor = (
          client.verify.services(service_sid)
          .entities(user.customer.totp_identity)
@@ -226,7 +189,6 @@ def verify(request):
       return HttpResponseRedirect(
          reverse("login_app:add_verify", kwargs={"pk": user.pk})
       )
-
 
    return render(request, 'login_app/verify.html', context)
 

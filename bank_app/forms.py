@@ -34,8 +34,7 @@ class createAccount(forms.ModelForm):
   class Meta:
     model = Account
     fields = ('title', 'user', 'account_type')
-    # title = forms.CharField(max_length = 200)
-    # user = forms.CharField(max_length=200)
+
 
 class TransferForm(forms.Form):
   amount = forms.DecimalField(max_digits=10)
@@ -47,10 +46,7 @@ class TransferForm(forms.Form):
 
   def clean(self):
       super().clean()
-      # credit_account = self.cleaned_data.get('credit_account')
-      # Account.objects.get(pk=credit_account)
       return self.cleaned_data
-
 
 class LoanForm(forms.Form):
   amount = forms.DecimalField(max_digits=10)
@@ -73,18 +69,11 @@ class PaymentForm(forms.Form):
   def clean(self):
     super().clean()
     return self.cleaned_data
-# Not in use I THINK
 
-class UserForm(forms.ModelForm):
-    username = forms.CharField(label='Username', disabled=True)
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
 
 class TickerForm(forms.Form):
     ticker = forms.CharField(label='', max_length=5)
     ticker.widget.attrs['placeholder'] = "Search by ticker"
-
 
 class StockForm(forms.Form):
     stock_amount = forms.IntegerField(label='Number of shares')
@@ -95,7 +84,6 @@ class StockForm(forms.Form):
     def clean(self):
         super().clean()
         return self.cleaned_data
-
 
 class SellStockForm(forms.Form):
     stock_holdings = forms.ModelChoiceField(

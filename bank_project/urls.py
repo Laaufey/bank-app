@@ -15,12 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from bank_app.views import TransferView
 
 urlpatterns = [
     path('', include('bank_app.urls')),
     path('admin/', admin.site.urls),
     path('user/', include('login_app.urls')),
     path('account/', include('bank_app.urls')),
-    path('external-transfer/', TransferView.as_view())
 ]

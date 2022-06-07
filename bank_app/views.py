@@ -8,7 +8,7 @@ from django.views import View
 import requests
 import environ
 import uuid
-from .models import Account, Customer, Ledger, ExternalLedger, StockHoldings
+from .models import Account, Customer, Ledger, StockHoldings
 from django.contrib.auth.models import User
 from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, SellStockForm, StockForm
 from decimal import Decimal
@@ -22,7 +22,6 @@ from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_p
 
 def index(request):
    return render(request, 'bank_app/index.html')
-
 
 @login_required
 def home(request):
@@ -74,7 +73,6 @@ def loans(request):
          amount = loan_form.cleaned_data['amount']
          loan_account = Account.objects.create(user=request.user, title="Loan Account", account_type='Loan Account')
          account = Account.objects.get(pk=loan_form.cleaned_data['account'].pk)
-         # bank = Account.objects.get(pk=11) #The Bank
          debit_text = loan_form.cleaned_data['debit_text']
          credit_text = loan_form.cleaned_data['credit_text']
          is_loan = True
@@ -123,29 +121,6 @@ def loan_details(request, id):
    }
    return render(request, 'bank_app/loan_details.html', context)
 
-def send_request(request, url):
-   session = requests.session()
-
-   login_url = url + 'user/login/'
-   session.get(login_url)
-   csrf = session.cookies['csrftoken']
-
-   bank_auth = {
-      'user': 'laufey',
-      'password': 'password',
-      'csrfmiddlewaretoken' : csrf
-   }
-
-   response = session.post(url + 'user/login/', data=bank_auth)
-   response.raise_for_status()
-   csrf = session.cookies['csrftoken']
-   
-   headers = { 'X-CSRFToken' : csrf, 'Referer': url }
-   response = session.post(url + 'external-transfer/', data=request.POST, headers=headers)
-   response.raise_for_status()
-
-   return response
-
 @login_required
 def transfer(request):
    
@@ -154,7 +129,6 @@ def transfer(request):
       transfer_form.fields['debit_account'].queryset = Account.objects.filter(user=request.user,account_type = 'Savings account' or 'Debit card' or 'Credit card')
       if transfer_form.is_valid():
          credit_bank_id = transfer_form.cleaned_data['credit_bank']
-         # credit_transfer_path = Bank.objects.get(pk=credit_bank_id).transfer_path
          amount = transfer_form.cleaned_data['amount']
          debit_text = transfer_form.cleaned_data['debit_text']
          credit_text = transfer_form.cleaned_data['credit_text']
@@ -222,12 +196,6 @@ def transfer(request):
                   except Exception: 
                      print("External transfer error")
                
-               # return HttpResponseRedirect('/transfer')
-            # r = send_request(request, credit_transfer_path)
-            #r = requests.post(credit_transfer_path, data=request.POST)
-            # print(credit_transfer_path)
-            # if r.status_code == 200:
-            # Check if account 
             else:
                print("Account not found")
    else:
@@ -257,7 +225,6 @@ def profile(request):
    return render(request, 'bank_app/profile.html', context)
 
 # Stocks
-
 @login_required
 def stocks(request):
    user = request.user
@@ -280,7 +247,6 @@ def stocks(request):
       }
 
    return render(request, 'bank_app/stocks.html', context)
-
 
 @login_required
 def ticker(request, tid):
@@ -305,7 +271,7 @@ def ticker(request, tid):
             text = "buy stocks"
 
             stock_holding = StockHoldings.objects.create(
-               user=request.user, company="Microsoft", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
+               user=request.user, company="Apple Inc", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
 
             transfer = Ledger.transfer(
                amount_transfered, debit_account, text, credit_account, text)
@@ -438,7 +404,9 @@ def staffNewAccount(request):
    if request.method == "POST":
       account_form = createAccount(request.POST)
       if account_form.is_valid():
-         Account.objects.create(user=account_form.cleaned_data['user'], title=account_form.cleaned_data['title'])
+         Account.objects.create(
+            user=account_form.cleaned_data['user'], 
+            title=account_form.cleaned_data['title'])
    context = {
          'account_form':createAccount,
          'accounts':Account.objects.all(),
@@ -467,29 +435,3 @@ def staffTransfers(request):
    }  
    
    return render(request, 'bank_app/staffTransfers.html', context)
-
-
-
-class TransferView(View):
-   queryset = Ledger.objects.all()
-
-   permission_classes = [permissions.IsAuthenticated]
-
-   test = "test"
-
-   def get(self, request, *args, **kwargs):
-      return HttpResponse(self.test)
-
-   def post(self, request, *args, **kwargs):
-
-      transfer_form = TransferForm(request.POST)
-      transfer_form.fields['debit_account'].queryset = request.user.customer.accounts
-      if transfer_form.is_valid():
-         credit_account = Account.objects.get(pk=transfer_form.cleaned_data['credit_account'])
-         credit_text = transfer_form.cleaned_data['credit_text']
-         amount = transfer_form.cleaned_data['amount']
-         transfer = ExternalLedger.transfer(amount, credit_account, credit_text, False)
-         print(transfer)
-         return HttpResponse(self.test)
-      
-      return HttpResponse(status=400)

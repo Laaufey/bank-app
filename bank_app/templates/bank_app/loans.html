@@ -21,38 +21,6 @@
 <div class="flex">
   <div>
     <h3>Your loans</h4>
-    <!-- <table class="account-table">
-      <tr class="account-titles">
-        <th>Loan no.</th>
-        <th>Loan taker</th>
-        <th>Loan type</th>
-        <th>Due date</th>
-        <th class="float-right">Remaining</th>
-      </tr>
-    {% for account in accounts %}
-      {% if account.user_id == user_id %}
-        {% for transaction in account.movements %}
-          {% for movement in ledger %}
-            {% if transaction.transaction_id == movement.transaction_id and movement.account_id != transaction.account_id %}
-              {% for other_account in accounts %}
-                {% if other_account.id == movement.account_id %}
-                  {% if other_account.title == 'BANK' and transaction.amount >= 0 %}
-                    <tr>
-                      <td><a href="{% url 'bank_app:loan_details' transaction.transaction_id %}">{{ transaction.transaction_id }}</a></td>
-                      <td>{{ user.customer.full_name }}</td>
-                      <td>Regular</td>
-                      <td>01.07.2022</td>
-                      <td class="float-right">{{ transaction.amount }} kr.</td>
-                    </tr>
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    </table> -->
     <table class="account-table">
       <tr class="account-titles">
         <th>Loan no.</th>
@@ -90,7 +58,5 @@
   </div>
 </div>
 {% endif %}
-
-
 
 {% endblock %}
