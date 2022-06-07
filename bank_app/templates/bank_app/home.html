@@ -69,9 +69,9 @@
           <td>{{ account.user }}</td>
           <td>{{ account.title }}</td>
           {% if account.money > 0 %}
-          <td class="float-right green">{{ account.money }} kr.</td>
+          <td class="float-right green">{{ account.money|floatformat:2 }} kr.</td>
           {% else %}
-          <td class="float-right">{{ account.money }} kr.</td>
+          <td class="float-right">{{ account.money|floatformat:2 }} kr.</td>
           {% endif %}
         </tr>
         {% endif %}

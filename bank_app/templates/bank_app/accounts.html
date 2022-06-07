@@ -4,7 +4,7 @@
 {% for account in accounts %}
   {% if account.user_id == user_id and account.account_type != 'Loan account' %}
   <div>
-  <h3><button id="{{account.id}}" onclick="showHide(`{{account.id}}`)">{{ account.title }} - {{ account.money }}kr</button></h3>
+  <h3><button id="{{account.id}}" onclick="showHide(`{{account.id}}`)">{{ account.title }} - {{ account.money|floatformat:2 }}kr</button></h3>
   <table id="account-table-{{account.id}}" class="account-table hidden">
     <tr class="account-titles">
       <th>Date</th>
@@ -34,9 +34,9 @@
       <td>{{ transaction.transaction_id }}</td> 
       <td>{{ transaction.text }}</td> 
       {% if transaction.amount >= 0 %}
-      <td class="green">{{ transaction.amount }}</td>
+      <td class="green">{{ transaction.amount|floatformat:2 }}</td>
       {% else %}
-      <td class="red">{{ transaction.amount }}</td> 
+      <td class="red">{{ transaction.amount|floatformat:2 }}</td> 
       {% endif %}
       
     
