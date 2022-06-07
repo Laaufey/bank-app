@@ -8,7 +8,7 @@ class GetAccount(generics.ListCreateAPIView):
     accounts = Account.objects.all()
     id = request.query_params.get("id")
 
-    account = accounts.get(pk=id)
+    account = accounts.get(id=id)
     serializer = GetAccountSerializer(account, many=False)
     return Response(data=serializer.data, status=200)
 
@@ -16,10 +16,10 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
   def post(self, request):
     accounts = Account.objects.all()
     account = request.query_params.get("id")
-    transaction = request.query_params.get("transaction")
+    transaction_id = request.query_params.get("transaction_id")
     amount = int(request.query_params.get("amount"))
     text = request.query_params.get("text") 
-    account = accounts.get(pk=id)
+    account = accounts.get(pk=account)
 
     try: 
       bank_account = accounts.get(title="Bank OPS Account")
@@ -29,7 +29,7 @@ class ExtrenalTransfer(generics.ListCreateAPIView):
         debit_text=text,
         credit_account=account,
         credit_text=text,
-        transaction=transaction,
+        transaction_id=transaction_id,
       )
       return Response({"info": "Transaction went through"}, status=200)
     except Exception as error:

@@ -63,7 +63,7 @@
           <th class="float-right">Status</th>
         </tr>
         {% for account in accounts %}
-        {% if account.user_id == user_id %}
+        {% if account.user_id == user_id and account.account_type != 'Loan account' %}
         <tr>
           <td>{{ account.id }}</td>
           <td>{{ account.user }}</td>

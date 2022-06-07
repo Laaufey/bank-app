@@ -62,7 +62,7 @@
         <th class="float-right">Remaining</th> 
       </tr>
       {% for account in accounts %}
-      {% if account.user_id == user_id and account.account_type == 'Loan Account' %}
+      {% if account.user_id == user_id and account.account_type == 'Loan account' %}
       <tr>
         <td><a href="{% url 'bank_app:loan_details' account.id %}">{{ account.id }}</a></td>
         <td>{{ user.customer.full_name }}</td>
