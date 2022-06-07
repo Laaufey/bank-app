@@ -6,7 +6,7 @@
 
 
 <div class="flex">
-  <div>
+
     <h3>{{ meta.name }} ({{ ticker }}) </h3>
     <p>Description: {{meta.description}}</p>
     <div class="main-ticker-price"><h1>{{ price.close }}</h1> <h5 class="usd">USD</h5></div>
@@ -16,25 +16,28 @@
         <div><p>Low: {{ price.low }}</p></div>
     </div>
 
-    <form action="" method="post">
-      {% csrf_token %}
-      <!-- <label for="stock_amount">Number of shares</label>
-      {{ buy_stock_form.stock_amount }}
-      <label for="debit_account">Choose Payment Account</label>
-      {{ buy_stock_form.debit_account }} -->
-      {{ buy_stock_form }}
-      <input type="Submit" value="Buy {{ ticker }}" class="ticker-input">
+    <div class="stock-forms">
+      <div class="buy-stock-form-container">
+        <h2>Buy</h2>
+        <form action="" method="post" class="buy-stock-form">
+          {% csrf_token %}
+          {{ buy_stock_form }}
+          <input type="Submit" value="Buy {{ ticker }}" class="ticker-input">
+        </form>
+      </div>
+     
 
-    </form>
-
-    <!-- <form action="" method="post" class="sell-stock-form">
-      {% csrf_token %}
-      {{ sell_stock_form }}
-      <input type="Submit" value="Sell {{ ticker }}" class="ticker-input"> -->
-
-    </form>
-
-    </div>
+      <div class="sell-stock-form-container">
+        <h2>Sell</h2>
+        <form action="" method="post" class="sell-stock-form">
+          {% csrf_token %}
+          {{ sell_stock_form }}
+          <input type="Submit" value="Sell {{ ticker }}" class="ticker-input">
+        </form>
+      </div>
+    
   </div>
+
+</div>
 
 {% endblock %}

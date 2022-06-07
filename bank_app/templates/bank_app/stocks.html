@@ -27,31 +27,31 @@
             <tr>
                 <td>Apple Inc</td>
                 <td>AAPL</td>
-                <td>{{ apple_price.close }}</td>
+                <td>${{ apple_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Google</td>
                 <td>GOOGL</td>
-                <td>{{ google_price.close }}</td>
+                <td>${{ google_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Microsoft</td>
                 <td>MSFT</td>
-                <td>{{ microsoft_price.close }}</td>
+                <td>${{ microsoft_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Amazon</td>
                 <td>AMZN</td>
-                <td>{{ amazon_price.close }}</td>
+                <td>${{ amazon_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Tesla</td>
                 <td>TSLA</td>
-                <td>{{ tesla_price.close }}</td>
+                <td>${{ tesla_price.close }}</td>
                 <td>
                     <a href="{% url 'bank_app:stocks' %}">
                     <button class="buy-button">Buy</button>
@@ -59,7 +59,7 @@
                 </td>
             </tr>
         </table>
-        <h3>Your Investments</h3>
+        <h3>Stock Holdings</h3>
         
         <table class="account-table">
             <tr class="account-titles">
@@ -76,7 +76,7 @@
                 <td>{{ stock.company }}</td>
                 <td>{{ stock.ticker }}</td>
                 <td>{{ stock.shares }}</td>
-                <td>{{ stock.bought_at }}</td>
+                <td>${{ stock.bought_at|floatformat:2 }}</td>
                 <td>-</td>
                 <td>0</td>
                 
