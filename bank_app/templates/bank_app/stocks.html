@@ -1,13 +1,13 @@
 {% extends 'bank_app/base/base3.html' %} 
 {% block content %}
 {% load static %}
-<h2>Investments</h2>
+<h2>Stocks</h2>
 
 
 <div class="flex">
 <div>
     <div class="stocks">
-        <h3>Stocks</h3>
+        <h3>Market</h3>
             <div class="ticker-container">
             <form action="/stocks/" method="post" class="ticker-form">
                 {% csrf_token %}
@@ -27,33 +27,38 @@
             <tr>
                 <td>Apple Inc</td>
                 <td>AAPL</td>
-                <td>${{ apple_price.close }}</td>
+                <td>123</td>
+                <!-- <td>${{ apple_price.close }}</td> -->
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Google</td>
                 <td>GOOGL</td>
-                <td>${{ google_price.close }}</td>
+                <td>123</td>
+                <!-- <td>${{ google_price.close }}</td> -->
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Microsoft</td>
                 <td>MSFT</td>
-                <td>${{ microsoft_price.close }}</td>
+                <td>123</td>
+                <!-- <td>${{ microsoft_price.close }}</td> -->
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Amazon</td>
                 <td>AMZN</td>
-                <td>${{ amazon_price.close }}</td>
+                <td>123</td>
+                <!-- <td>${{ amazon_price.close }}</td> -->
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Tesla</td>
                 <td>TSLA</td>
-                <td>${{ tesla_price.close }}</td>
+                <td>123</td>
+                <!-- <td>${{ tesla_price.close }}</td> -->
                 <td>
-                    <a href="{% url 'bank_app:stocks' %}">
+                    <a href="">
                     <button class="buy-button">Buy</button>
                 </a>
                 </td>
@@ -83,10 +88,11 @@
             </tr>
             {% endfor %}
         </table>
-    
 
+        
     
     </div>
 </div>
+
 
 {% endblock %} 

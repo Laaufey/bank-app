@@ -10,14 +10,14 @@ import environ
 import uuid
 from .models import Account, Customer, Ledger, StockHoldings
 from django.contrib.auth.models import User
-from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, SellStockForm, StockForm
+from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, SellStockForm, StockForm, CryptoTickerForm
 from decimal import Decimal
 from rest_framework import permissions
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from twilio.rest import Client
-from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price, get_tesla_info
+from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price, get_btc_info, get_eth_info, get_usdt_info, get_ada_info, get_doge_info, get_crypto_data
 
 
 def index(request):
@@ -250,30 +250,28 @@ def profile(request):
 
 @login_required
 def stocks(request):
-    user = request.user
     if request.method == 'POST':
-        form = TickerForm(request.POST)
-        if form.is_valid():
+        ticker_form = TickerForm(request.POST)
+        if ticker_form.is_valid():
             ticker = request.POST['ticker']
             return HttpResponseRedirect(ticker)
     else:
-        form = TickerForm()
+        ticker_form = TickerForm()
         context = {
-            'apple_price': get_apple_price(),
-            'google_price': get_google_price(),
-            'microsoft_price': get_microsoft_price(),
-            'amazon_price': get_amazon_price(),
-            'tesla_price': get_tesla_price(),
-            'tesla_info': get_tesla_info(),
-            'ticker_form': form,
-            'stock_holdings': StockHoldings.objects.all()
+            # 'apple_price': get_apple_price(),
+            # 'google_price': get_google_price(),
+            # 'microsoft_price': get_microsoft_price(),
+            # 'amazon_price': get_amazon_price(),
+            # 'tesla_price': get_tesla_price(),
+            'ticker_form': ticker_form,
+            'stock_holdings': StockHoldings.objects.all(),
         }
 
     return render(request, 'bank_app/stocks.html', context)
 
 
 @login_required
-def ticker(request, tid):
+def stocks_ticker(request, tid):
     price_data = get_price_data(tid)
     meta_data = get_meta_data(tid)
     holding_id = StockHoldings.objects.get(holding_id=5).shares
@@ -347,10 +345,44 @@ def ticker(request, tid):
         'sell_stock_form': sell_stock_form,
     }
 
-    return render(request, 'bank_app/ticker.html', context)
+    return render(request, 'bank_app/stocks_ticker.html', context)
 
+
+@login_required
+def crypto(request):
+    if request.method == 'POST':
+        crypto_form = CryptoTickerForm(request.POST)
+        if crypto_form.is_valid():
+            ticker = request.POST['ticker']
+            return HttpResponseRedirect(ticker)
+    else:
+        crypto_form = CryptoTickerForm()
+        context = {
+            'crypto_form': crypto_form,
+            'stock_holdings': StockHoldings.objects.all(),
+            # 'btc': get_btc_info(),
+            # 'eth': get_eth_info(),
+            # 'usdt': get_usdt_info(),
+            # 'ada': get_ada_info(),
+            # 'doge': get_doge_info()
+        }
+
+    return render(request, 'bank_app/crypto.html', context)
+
+
+@login_required
+def crypto_ticker(request, tid):
+    crypto_data = get_crypto_data(tid)
+
+    context = {
+        'data': crypto_data
+    }
+
+    return render(request, 'bank_app/crypto_ticker.html', context)
 
 # Admin
+
+
 @login_required
 def staff(request):
     assert request.user.is_staff, 'Not for regular customers, only for admin'

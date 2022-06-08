@@ -5,10 +5,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'css/style2.css' %}?version=1">
+  <link rel="stylesheet" href="{% static 'css/style2.css' %}">
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
+  <!-- ?version=1 -->
   <title>{% block title %} Sparion {% endblock %}</title>
 </head>
 <body class="white">
@@ -56,11 +56,17 @@
           </li>
         </a>
         <div class="line"></div>
-        <a href="{% url 'bank_app:stocks' %}"> 
-          <li>
+        
+          <li id="drop-down-link">
             Investments
           </li>
-        </a>
+      
+
+        <ul class="sub-menu hidden">
+          <a href="{% url 'bank_app:stocks' %}"><li>Stocks</li></a>
+          <a href="{% url 'bank_app:crypto' %}"><li>Cryptocurrency</li></a>
+        </ul>
+
         <div class="line"></div>
         <a  href="{% url 'bank_app:profile' %}">
           <li>
@@ -98,6 +104,6 @@
     <span>Swift: HIMMEL</span>
   </div>
 </footer>
-<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/base3.js' %}"></script>
 </body>
 </html>

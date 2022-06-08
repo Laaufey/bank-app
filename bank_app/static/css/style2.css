@@ -354,6 +354,31 @@ tr:nth-child(odd) {
   border: solid 1px rgba(133, 133, 133, 0.3);
 }
 
+.capitalize {
+  text-transform: uppercase;
+}
+
+.font-small {
+  font-size: 10px;
+}
+
+.flex1 {
+  display: flex;
+}
+
+/* INVESTMENTS NAV DROP DOWN */
+
+.sub-menu {
+  background-color: var(--sparion-table-color);
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+#drop-down-link {
+  color: #555;
+  cursor: pointer;
+}
+
 /* PROFILE */
 
 .profile-nav {

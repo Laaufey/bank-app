@@ -1,0 +1,89 @@
+{% extends 'bank_app/base/base3.html' %} 
+{% block content %}
+{% load static %}
+
+<h2>Cryptocurrency</h2>
+        <div class="flex">
+            <div>
+                <div class="stocks">
+                    <h3>Market</h3>
+                        <div class="ticker-container">
+                        <form action="/crypto/" method="post" class="ticker-form">
+                            {% csrf_token %}
+                            {{ crypto_form }}
+                            <input type="submit" value="Search" class="ticker-input">
+                        
+                        </form>
+                    </div>
+                </div>
+        
+        <table class="account-table">
+            <tr class="account-titles">
+            <th>Currency</th>
+            <th>Ticker</th>
+            <th>Buy</th>
+            <th>Sell</th>
+            </tr>
+            <!-- <tr>
+                <td><p>Bitcoin</p><p class="capitalize font-small">{{ btc.baseCurrency }}</p></td>
+                <td><p class="capitalize">{{ btc.ticker }}</p></td>
+                {% for price in btc.topOfBookData %}
+                <td>${{ price.askPrice }}</td>
+                <td>${{ price.bidPrice }}</td>
+                {% endfor %}
+                <td><button class="buy-button">Buy</button></td>
+            </tr>
+            <tr>
+                <td><p>Ethereum</p><p class="capitalize font-small">{{ eth.baseCurrency }}</p></td>
+                <td><p class="capitalize">{{ eth.ticker }}</p></td>
+                {% for price in eth.topOfBookData %}
+                <td>${{ price.askPrice }}</td>
+                <td>${{ price.bidPrice }}</td>
+                {% endfor %}
+                <td><button class="buy-button">Buy</button></td>
+            </tr>
+            <tr>
+                <td><p>Tether</p><p class="capitalize font-small">{{ usdt.baseCurrency }}</p></td>
+                <td><p class="capitalize">{{ usdt.ticker }}</p></td>
+                {% for price in usdt.topOfBookData %}
+                <td>${{ price.askPrice }}</td>
+                <td>${{ price.bidPrice }}</td>
+                {% endfor %}
+                <td><button class="buy-button">Buy</button></td>
+            </tr>
+            <tr>
+                <td><p>Cardano</p><p class="capitalize font-small">{{ ada.baseCurrency }}</p></td>
+                <td><p class="capitalize">{{ ada.ticker }}</p></td>
+                {% for price in ada.topOfBookData %}
+                <td>${{ price.askPrice }}</td>
+                <td>${{ price.bidPrice }}</td>
+                {% endfor %}
+                <td><button class="buy-button">Buy</button></td>
+            </tr>
+            <tr>
+                <td><p>Dogecoin</p><p class="capitalize font-small">{{ doge.baseCurrency }}</p></td>
+                <td><p class="capitalize">{{ doge.ticker }}</p></td>
+                {% for price in doge.topOfBookData %}
+                <td>${{ price.askPrice }}</td>
+                <td>${{ price.bidPrice }}</td>
+                {% endfor %}
+                <td><button class="buy-button">Buy</button></td>
+            </tr> -->
+          
+        </table>
+
+        <h3>Your Cryptocurrency</h3>
+
+        <table class="account-table">
+            <tr class="account-titles">
+                <th>Currency</th>
+                <th>Ticker</th>
+                <th>Buy</th>
+                <th>Sell</th>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %} 

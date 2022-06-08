@@ -9,10 +9,12 @@ stocks_auth_token_3 = env("STOCKS_AUTH_TOKEN_3")
 
 headers = {
     'Content-Type': 'application/json',
-    # 'Authorization': stocks_auth_token_1
-    'Authorization': stocks_auth_token_2
+    'Authorization': stocks_auth_token_1
+    # 'Authorization': stocks_auth_token_2
     # 'Authorization': stocks_auth_token_3
 }
+
+# STOCKS
 
 
 def get_meta_data(ticker):
@@ -57,7 +59,40 @@ def get_tesla_price():
     return response.json()[0]
 
 
-def get_tesla_info():
-    url = 'https://api.tiingo.com/tiingo/daily/tsla'
+# CRYPTO
+
+
+def get_btc_info():
+    url = 'https://api.tiingo.com/tiingo/crypto/top?tickers=btcusd'
     response = requests.get(url, headers=headers)
-    return response.json()
+    return response.json()[0]
+
+
+def get_eth_info():
+    url = 'https://api.tiingo.com/tiingo/crypto/top?tickers=ethusd'
+    response = requests.get(url, headers=headers)
+    return response.json()[0]
+
+
+def get_usdt_info():
+    url = 'https://api.tiingo.com/tiingo/crypto/top?tickers=usdtusd'
+    response = requests.get(url, headers=headers)
+    return response.json()[0]
+
+
+def get_ada_info():
+    url = 'https://api.tiingo.com/tiingo/crypto/top?tickers=adausd'
+    response = requests.get(url, headers=headers)
+    return response.json()[0]
+
+
+def get_doge_info():
+    url = 'https://api.tiingo.com/tiingo/crypto/top?tickers=dogeusd'
+    response = requests.get(url, headers=headers)
+    return response.json()[0]
+
+
+def get_crypto_data(ticker):
+    url = 'https://api.tiingo.com/tiingo/crypto/top?tickers={}'.format(ticker)
+    response = requests.get(url, headers=headers)
+    return response.json()[0]

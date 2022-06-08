@@ -1,0 +1,19 @@
+{% extends 'bank_app/base/base3.html' %} 
+{% block content %}
+{% load static %}
+
+<h2>Cryptocurrency</h2>
+
+<div class="flex">
+
+    <h3>{{ data.baseCurrency }} ({{ data.ticker }}) </h3>
+
+    <div class="main-ticker-price"><h1>123</h1> <h5 class="usd">USD</h5></div>
+    <div class="ticker-prices">
+        <div><p>Buy: </p></div>
+        <div><p>Sell:</p></div>
+        
+    </div>
+</div>
+
+{% endblock %} 
