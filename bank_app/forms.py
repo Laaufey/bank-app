@@ -48,7 +48,7 @@ class TransferForm(forms.Form):
     debit_text = forms.CharField(max_length=35, label="Note:")
     credit_bank = forms.IntegerField(label='Bank Number')
     credit_account = forms.IntegerField(label='Credit Account Number')
-    credit_text = forms.CharField(max_length=35, label="Explanaition:")
+    credit_text = forms.CharField(max_length=35, label="Explanation:")
 
     def clean(self):
         super().clean()
@@ -105,5 +105,23 @@ class StockForm(forms.Form):
 class SellStockForm(forms.Form):
     stock_holdings = forms.ModelChoiceField(
         label='Choose Stock Holding', queryset=Customer.objects.none())
+    debit_account = forms.ModelChoiceField(
+        label='Receive payment account', queryset=Customer.objects.none())
+
+
+class BuyCryptoForm(forms.Form):
+    crypto_amount = forms.FloatField(label='Amount')
+    crypto_amount.widget.attrs['placeholder'] = "ex. 0.01"
+    debit_account = forms.ModelChoiceField(
+        label='Choose payment account', queryset=Customer.objects.none())
+
+    def clean(self):
+        super().clean()
+        return self.cleaned_data
+
+
+class SellCryptoForm(forms.Form):
+    crypto_holdings = forms.ModelChoiceField(
+        label='Choose Crypto to sell', queryset=Customer.objects.none())
     debit_account = forms.ModelChoiceField(
         label='Receive payment account', queryset=Customer.objects.none())

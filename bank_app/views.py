@@ -8,16 +8,16 @@ from django.views import View
 import requests
 import environ
 import uuid
-from .models import Account, Customer, Ledger, StockHoldings
+from .models import Account, Customer, Ledger, StockHoldings, CryptoHoldings
 from django.contrib.auth.models import User
-from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, SellStockForm, StockForm, CryptoTickerForm
+from .forms import createAccount, createCustomer, createUser, UpdateUserForm, UpdateCustomerForm, TransferForm, LoanForm, TickerForm, SellStockForm, StockForm, CryptoTickerForm, BuyCryptoForm, SellCryptoForm
 from decimal import Decimal
 from rest_framework import permissions
 from rest_framework import viewsets
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from twilio.rest import Client
-from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price, get_btc_info, get_eth_info, get_usdt_info, get_ada_info, get_doge_info, get_crypto_data
+from .stocks import get_meta_data, get_price_data, get_apple_price, get_google_price, get_microsoft_price, get_amazon_price, get_tesla_price, get_btc_info, get_eth_info, get_usdt_info, get_ada_info, get_doge_info, get_crypto_tob, get_crypto_price
 
 
 def index(request):
@@ -372,10 +372,58 @@ def crypto(request):
 
 @login_required
 def crypto_ticker(request, tid):
-    crypto_data = get_crypto_data(tid)
+    tob_price = get_crypto_tob(tid)
+    price = get_crypto_price(tid)
+    buy_crypto_form = BuyCryptoForm()
+    sell_crypto_form = SellCryptoForm()
+
+    tob_data = tob_price['topOfBookData']
+    print(tob_data[0]['askPrice'])
+
+    if request.method == "POST":
+
+        buy_crypto_form = BuyCryptoForm(request.POST)
+        sell_crypto_form = SellCryptoForm(request.POST)
+        sell_crypto_form.fields['crypto_holdings'].queryset = CryptoHoldings.objects.filter(
+            user=request.user)
+        sell_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+        buy_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+
+    if buy_crypto_form.is_valid():
+        tob_data = tob_price['topOfBookData']
+        crypto_value = (tob_data[0]['askPrice'])
+
+        # company_name = meta_data['name']
+        crypto_amount = buy_crypto_form.cleaned_data['crypto_amount']
+        amount_transfered = crypto_value * crypto_amount
+        debit_account = buy_crypto_form.cleaned_data['debit_account']
+        credit_account = Account.objects.get(title='Bank Stock Account')
+        text = "buy crypto"
+
+        crypto_holding = CryptoHoldings.objects.create(
+            user=request.user, coin_name="Cardano", ticker=tid, shares=crypto_amount, bought_at=amount_transfered)
+
+        transfer = Ledger.transfer(
+            amount_transfered, debit_account, text, credit_account, text)
+        print("AMOUNT", amount_transfered)
+        print(crypto_holding)
+        print(transfer)
+        return HttpResponseRedirect('/crypto')
+    else:
+        sell_crypto_form.fields['crypto_holdings'].queryset = CryptoHoldings.objects.filter(
+            user=request.user)
+        sell_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+        buy_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
 
     context = {
-        'data': crypto_data
+        'buy_crypto_form': buy_crypto_form,
+        'sell_crypto_form': sell_crypto_form,
+        'tob': tob_price,
+        'price': price
     }
 
     return render(request, 'bank_app/crypto_ticker.html', context)

@@ -5,15 +5,43 @@
 <h2>Cryptocurrency</h2>
 
 <div class="flex">
-
-    <h3>{{ data.baseCurrency }} ({{ data.ticker }}) </h3>
-
-    <div class="main-ticker-price"><h1>123</h1> <h5 class="usd">USD</h5></div>
+    <h3 class="capitalize">{{ tob.baseCurrency }}</h3>
+    {% for price in tob.topOfBookData %} 
+    <div class="main-ticker-price"><h1>{{ price.lastPrice|floatformat:2}}</h1> <h5 class="usd">USD</h5></div>
     <div class="ticker-prices">
-        <div><p>Buy: </p></div>
-        <div><p>Sell:</p></div>
+        <div><p>Buy: ${{ price.askPrice|floatformat:2 }}</p></div>
+        <div><p>Sell: ${{ price.bidPrice|floatformat:2 }}</p></div>
+        {% endfor %}
         
+        {% for price in price.priceData %}
+        <div><p>High: ${{ price.high|floatformat:2 }}</p></div>
+        <div><p>Low: ${{ price.low|floatformat:2 }}</p></div>
+        {% endfor %}
     </div>
+
+    <div class="stock-forms">
+        <div class="buy-stock-form-container">
+          <h2>Buy</h2>
+          <form action="" method="post" class="buy-stock-form">
+            {% csrf_token %}
+            {{ buy_crypto_form }}
+            <input type="Submit" value="Buy {{ tob.baseCurrency }}" class="ticker-input">
+          </form>
+        </div>
+       
+  
+        <div class="sell-stock-form-container">
+          <h2>Sell</h2>
+          <form action="" method="post" class="sell-stock-form">
+            {% csrf_token %}
+            {{ sell_crypto_form }}
+            <input type="Submit" value="Sell {{ tob.baseCurrency }}" class="ticker-input">
+          </form>
+        </div>
+      
+    </div>
+  
+
 </div>
 
 {% endblock %} 

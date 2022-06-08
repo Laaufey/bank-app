@@ -9,9 +9,9 @@ stocks_auth_token_3 = env("STOCKS_AUTH_TOKEN_3")
 
 headers = {
     'Content-Type': 'application/json',
-    'Authorization': stocks_auth_token_1
+    # 'Authorization': stocks_auth_token_1
     # 'Authorization': stocks_auth_token_2
-    # 'Authorization': stocks_auth_token_3
+    'Authorization': stocks_auth_token_3
 }
 
 # STOCKS
@@ -92,7 +92,14 @@ def get_doge_info():
     return response.json()[0]
 
 
-def get_crypto_data(ticker):
+def get_crypto_tob(ticker):
     url = 'https://api.tiingo.com/tiingo/crypto/top?tickers={}'.format(ticker)
+    response = requests.get(url, headers=headers)
+    return response.json()[0]
+
+
+def get_crypto_price(ticker):
+    url = 'https://api.tiingo.com/tiingo/crypto/prices?tickers={}&resampleFreq=1day'.format(
+        ticker)
     response = requests.get(url, headers=headers)
     return response.json()[0]

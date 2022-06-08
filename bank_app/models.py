@@ -131,3 +131,15 @@ class StockHoldings(models.Model):
 
     def __str__(self):
         return f'{self.holding_id} | {self.company} | no. of shares: {self.shares}'
+
+
+class CryptoHoldings(models.Model):
+    holding_id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    coin_name = models.CharField(max_length=255)
+    ticker = models.CharField(max_length=5)
+    shares = models.FloatField()
+    bought_at = models.FloatField()
+
+    def __str__(self):
+        return f'{self.holding_id} | {self.coin_name} | share: {self.shares}'
