@@ -76,12 +76,27 @@
 
         <table class="account-table">
             <tr class="account-titles">
-                <th>Currency</th>
-                <th>Ticker</th>
-                <th>Buy</th>
-                <th>Sell</th>
+            
+            
+            <th>Ticker</th>
+            <th>Amount</th>
+            <th>Bought at</th>
+            <th>Market Value</th>
+            <th>Profit</th>
             </tr>
+            <tr>
+                {% for crypto in crypto_holdings %}
+               
+                <td>{{ crypto.ticker }}</td>
+                <td>{{ crypto.shares }}</td>
+                <td>${{ crypto.bought_at|floatformat:2 }}</td>
+                <td>-</td>
+                <td>0</td>
+                
+            </tr>
+            {% endfor %}
         </table>
+
     </div>
 </div>
 

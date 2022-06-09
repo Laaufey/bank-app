@@ -142,4 +142,4 @@ class CryptoHoldings(models.Model):
     bought_at = models.FloatField()
 
     def __str__(self):
-        return f'{self.holding_id} | {self.coin_name} | share: {self.shares}'
+        return f'{self.holding_id} | {self.coin_name} | {self.ticker} | amount: {self.shares}'

@@ -274,8 +274,6 @@ def stocks(request):
 def stocks_ticker(request, tid):
     price_data = get_price_data(tid)
     meta_data = get_meta_data(tid)
-    holding_id = StockHoldings.objects.get(holding_id=5).shares
-    print(holding_id)
 
     if request.method == "POST":
         buy_stock_form = StockForm(request.POST)
@@ -289,7 +287,7 @@ def stocks_ticker(request, tid):
 
         if buy_stock_form.is_valid():
             stock_value = price_data['close']
-            # company_name = meta_data['name']
+            company_name = meta_data['name']
             stock_amount = buy_stock_form.cleaned_data['stock_amount']
             amount_transfered = stock_value * stock_amount
             debit_account = buy_stock_form.cleaned_data['debit_account']
@@ -297,7 +295,7 @@ def stocks_ticker(request, tid):
             text = "buy stocks"
 
             stock_holding = StockHoldings.objects.create(
-                user=request.user, company="Apple Inc", ticker=tid, shares=stock_amount, bought_at=amount_transfered)
+                user=request.user, company=company_name, ticker=tid, shares=stock_amount, bought_at=amount_transfered)
 
             transfer = Ledger.transfer(
                 amount_transfered, debit_account, text, credit_account, text)
@@ -359,7 +357,7 @@ def crypto(request):
         crypto_form = CryptoTickerForm()
         context = {
             'crypto_form': crypto_form,
-            'stock_holdings': StockHoldings.objects.all(),
+            'crypto_holdings': CryptoHoldings.objects.all(),
             # 'btc': get_btc_info(),
             # 'eth': get_eth_info(),
             # 'usdt': get_usdt_info(),
@@ -374,28 +372,26 @@ def crypto(request):
 def crypto_ticker(request, tid):
     tob_price = get_crypto_tob(tid)
     price = get_crypto_price(tid)
+    # meta_data = get_crypto_data(tid)
     buy_crypto_form = BuyCryptoForm()
     sell_crypto_form = SellCryptoForm()
-
-    tob_data = tob_price['topOfBookData']
-    print(tob_data[0]['askPrice'])
 
     if request.method == "POST":
 
         buy_crypto_form = BuyCryptoForm(request.POST)
+        buy_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
+            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
+
         sell_crypto_form = SellCryptoForm(request.POST)
         sell_crypto_form.fields['crypto_holdings'].queryset = CryptoHoldings.objects.filter(
-            user=request.user)
+            user=request.user, ticker=tid)
         sell_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
-            user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
-        buy_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
             user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
 
     if buy_crypto_form.is_valid():
         tob_data = tob_price['topOfBookData']
         crypto_value = (tob_data[0]['askPrice'])
 
-        # company_name = meta_data['name']
         crypto_amount = buy_crypto_form.cleaned_data['crypto_amount']
         amount_transfered = crypto_value * crypto_amount
         debit_account = buy_crypto_form.cleaned_data['debit_account']
@@ -403,7 +399,7 @@ def crypto_ticker(request, tid):
         text = "buy crypto"
 
         crypto_holding = CryptoHoldings.objects.create(
-            user=request.user, coin_name="Cardano", ticker=tid, shares=crypto_amount, bought_at=amount_transfered)
+            user=request.user, coin_name="Tether", ticker=tid, shares=crypto_amount, bought_at=amount_transfered)
 
         transfer = Ledger.transfer(
             amount_transfered, debit_account, text, credit_account, text)
@@ -411,9 +407,31 @@ def crypto_ticker(request, tid):
         print(crypto_holding)
         print(transfer)
         return HttpResponseRedirect('/crypto')
+
+    if sell_crypto_form.is_valid():
+        tob_data = tob_price['topOfBookData']
+        crypto_value = (tob_data[0]['askPrice'])
+
+        holding_id = CryptoHoldings.objects.get(
+            pk=sell_crypto_form.cleaned_data['crypto_holdings'].pk)
+        crypto_amount = holding_id.shares
+        amount_transfered = crypto_value * crypto_amount
+        debit_account = Account.objects.get(title='Bank Stock Account')
+        credit_account = sell_crypto_form.cleaned_data['debit_account']
+        text = "sell crypto"
+
+        delete_crypto_holding = CryptoHoldings.objects.filter(
+            pk=holding_id.holding_id).delete()
+
+        transfer = Ledger.transfer(
+            amount_transfered, debit_account, text, credit_account, text)
+        print(delete_crypto_holding)
+        print(transfer)
+        return HttpResponseRedirect('/crypto')
+
     else:
         sell_crypto_form.fields['crypto_holdings'].queryset = CryptoHoldings.objects.filter(
-            user=request.user)
+            user=request.user, ticker=tid)
         sell_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
             user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
         buy_crypto_form.fields['debit_account'].queryset = Account.objects.filter(
