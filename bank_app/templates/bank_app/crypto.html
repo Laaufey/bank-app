@@ -24,12 +24,12 @@
             <th>Buy</th>
             <th>Sell</th>
             </tr>
-            <!-- <tr>
+            <tr>
                 <td><p>Bitcoin</p><p class="capitalize font-small">{{ btc.baseCurrency }}</p></td>
                 <td><p class="capitalize">{{ btc.ticker }}</p></td>
                 {% for price in btc.topOfBookData %}
-                <td>${{ price.askPrice }}</td>
-                <td>${{ price.bidPrice }}</td>
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                <td>${{ price.bidPrice|floatformat:2 }}</td>
                 {% endfor %}
                 <td><button class="buy-button">Buy</button></td>
             </tr>
@@ -37,8 +37,8 @@
                 <td><p>Ethereum</p><p class="capitalize font-small">{{ eth.baseCurrency }}</p></td>
                 <td><p class="capitalize">{{ eth.ticker }}</p></td>
                 {% for price in eth.topOfBookData %}
-                <td>${{ price.askPrice }}</td>
-                <td>${{ price.bidPrice }}</td>
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                <td>${{ price.bidPrice|floatformat:2 }}</td>
                 {% endfor %}
                 <td><button class="buy-button">Buy</button></td>
             </tr>
@@ -46,8 +46,8 @@
                 <td><p>Tether</p><p class="capitalize font-small">{{ usdt.baseCurrency }}</p></td>
                 <td><p class="capitalize">{{ usdt.ticker }}</p></td>
                 {% for price in usdt.topOfBookData %}
-                <td>${{ price.askPrice }}</td>
-                <td>${{ price.bidPrice }}</td>
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                <td>${{ price.bidPrice|floatformat:2 }}</td>
                 {% endfor %}
                 <td><button class="buy-button">Buy</button></td>
             </tr>
@@ -55,8 +55,8 @@
                 <td><p>Cardano</p><p class="capitalize font-small">{{ ada.baseCurrency }}</p></td>
                 <td><p class="capitalize">{{ ada.ticker }}</p></td>
                 {% for price in ada.topOfBookData %}
-                <td>${{ price.askPrice }}</td>
-                <td>${{ price.bidPrice }}</td>
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                <td>${{ price.bidPrice|floatformat:2 }}</td>
                 {% endfor %}
                 <td><button class="buy-button">Buy</button></td>
             </tr>
@@ -64,11 +64,11 @@
                 <td><p>Dogecoin</p><p class="capitalize font-small">{{ doge.baseCurrency }}</p></td>
                 <td><p class="capitalize">{{ doge.ticker }}</p></td>
                 {% for price in doge.topOfBookData %}
-                <td>${{ price.askPrice }}</td>
-                <td>${{ price.bidPrice }}</td>
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                <td>${{ price.bidPrice|floatformat:2 }}</td>
                 {% endfor %}
                 <td><button class="buy-button">Buy</button></td>
-            </tr> -->
+            </tr>
           
         </table>
 
@@ -90,8 +90,26 @@
                 <td>{{ crypto.ticker }}</td>
                 <td>{{ crypto.shares }}</td>
                 <td>${{ crypto.bought_at|floatformat:2 }}</td>
-                <td>-</td>
-                <td>0</td>
+
+                {% if crypto.ticker == 'ADAUSD' %}
+                {% for price in ada.topOfBookData %}
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                {% endfor %}
+
+                {% elif crypto.ticker == 'USDTUSD' %}
+                {% for price in usdt.topOfBookData %}
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                {% endfor %}
+
+                {% elif crypto.ticker == 'BTCUSD' %}
+                {% for price in btc.topOfBookData %}
+                <td>${{ price.askPrice|floatformat:2 }}</td>
+                {% endfor %}
+                {% else %}
+                <td>$127.68</td>
+                {% endif %}
+                <td>$2.46</td>
+               
                 
             </tr>
             {% endfor %}

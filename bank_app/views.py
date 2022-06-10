@@ -66,9 +66,7 @@ def accounts(request):
 def loans(request):
     user = request.user
     if not request.user.customer.customer_rank == "GOLD" and not request.user.customer.customer_rank == "silver":
-        context = {
-
-        }
+        context = {}
         return render(request, 'bank_app/loans.html', context)
     if request.method == "POST":
         loan_form = LoanForm(request.POST)
@@ -94,7 +92,6 @@ def loans(request):
         'customers': Customer.objects.all(),
         'loan_form': loan_form,
         'accounts': Account.objects.all(),
-        'ledger': Ledger.objects.all()
     }
     return render(request, 'bank_app/loans.html', context)
 
@@ -102,8 +99,6 @@ def loans(request):
 @login_required
 def loan_details(request, id):
     account = Account.objects.filter(id=id)
-    # transactions = Ledger.objects.filter(transaction_id=transaction_id)
-    # print(transactions)
     if request.method == "POST":
         loan_form = LoanForm(request.POST)
         loan_form.fields['account'].queryset = request.user.customer.accounts
@@ -111,7 +106,6 @@ def loan_details(request, id):
             amount = loan_form.cleaned_data['amount']
             customer_account = Account.objects.get(
                 pk=loan_form.cleaned_data['account'].pk)
-            # account = Account.objects.get(pk=11) #The Bank
             account = Account.objects.get(pk=id)
             debit_text = loan_form.cleaned_data['debit_text']
             credit_text = loan_form.cleaned_data['credit_text']
@@ -124,7 +118,6 @@ def loan_details(request, id):
         loan_form.fields['account'].queryset = request.user.customer.accounts
 
     context = {
-        # 'transactions':transactions,
         'account': account,
         'accounts': Account.objects.all(),
         'loan_form': loan_form,
@@ -258,11 +251,11 @@ def stocks(request):
     else:
         ticker_form = TickerForm()
         context = {
-            # 'apple_price': get_apple_price(),
-            # 'google_price': get_google_price(),
-            # 'microsoft_price': get_microsoft_price(),
-            # 'amazon_price': get_amazon_price(),
-            # 'tesla_price': get_tesla_price(),
+            'apple_price': get_apple_price(),
+            'google_price': get_google_price(),
+            'microsoft_price': get_microsoft_price(),
+            'amazon_price': get_amazon_price(),
+            'tesla_price': get_tesla_price(),
             'ticker_form': ticker_form,
             'stock_holdings': StockHoldings.objects.all(),
         }
@@ -279,7 +272,7 @@ def stocks_ticker(request, tid):
         buy_stock_form = StockForm(request.POST)
         sell_stock_form = SellStockForm(request.POST)
         sell_stock_form.fields['stock_holdings'].queryset = StockHoldings.objects.filter(
-            user=request.user)
+            user=request.user, ticker=tid)
         sell_stock_form.fields['debit_account'].queryset = Account.objects.filter(
             user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
         buy_stock_form.fields['debit_account'].queryset = Account.objects.filter(
@@ -333,7 +326,7 @@ def stocks_ticker(request, tid):
         sell_stock_form.fields['debit_account'].queryset = Account.objects.filter(
             user=request.user, account_type='Savings account' or 'Debit card' or 'Credit card')
         sell_stock_form.fields['stock_holdings'].queryset = StockHoldings.objects.filter(
-            user=request.user)
+            user=request.user, ticker=tid)
 
     context = {
         'ticker': tid,
@@ -358,11 +351,11 @@ def crypto(request):
         context = {
             'crypto_form': crypto_form,
             'crypto_holdings': CryptoHoldings.objects.all(),
-            # 'btc': get_btc_info(),
-            # 'eth': get_eth_info(),
-            # 'usdt': get_usdt_info(),
-            # 'ada': get_ada_info(),
-            # 'doge': get_doge_info()
+            'btc': get_btc_info(),
+            'eth': get_eth_info(),
+            'usdt': get_usdt_info(),
+            'ada': get_ada_info(),
+            'doge': get_doge_info()
         }
 
     return render(request, 'bank_app/crypto.html', context)
@@ -399,7 +392,7 @@ def crypto_ticker(request, tid):
         text = "buy crypto"
 
         crypto_holding = CryptoHoldings.objects.create(
-            user=request.user, coin_name="Tether", ticker=tid, shares=crypto_amount, bought_at=amount_transfered)
+            user=request.user, coin_name="Cardano", ticker=tid, shares=crypto_amount, bought_at=amount_transfered)
 
         transfer = Ledger.transfer(
             amount_transfered, debit_account, text, credit_account, text)

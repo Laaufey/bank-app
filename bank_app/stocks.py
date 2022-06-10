@@ -5,13 +5,15 @@ environ.Env.read_env()
 stocks_auth_token_1 = env("STOCKS_AUTH_TOKEN_1")
 stocks_auth_token_2 = env("STOCKS_AUTH_TOKEN_2")
 stocks_auth_token_3 = env("STOCKS_AUTH_TOKEN_3")
+stocks_auth_token_4 = env("STOCKS_AUTH_TOKEN_4")
 
 
 headers = {
     'Content-Type': 'application/json',
-    'Authorization': stocks_auth_token_1
+    # 'Authorization': stocks_auth_token_1
     # 'Authorization': stocks_auth_token_2
     # 'Authorization': stocks_auth_token_3
+    'Authorization': stocks_auth_token_4
 }
 
 # STOCKS

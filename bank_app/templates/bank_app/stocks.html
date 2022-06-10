@@ -27,36 +27,36 @@
             <tr>
                 <td>Apple Inc</td>
                 <td>AAPL</td>
-                <td>123</td>
-                <!-- <td>${{ apple_price.close }}</td> -->
+                <!-- <td>123</td> -->
+                <td>${{ apple_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Google</td>
                 <td>GOOGL</td>
-                <td>123</td>
-                <!-- <td>${{ google_price.close }}</td> -->
+                <!-- <td>123</td> -->
+                <td>${{ google_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Microsoft</td>
                 <td>MSFT</td>
-                <td>123</td>
-                <!-- <td>${{ microsoft_price.close }}</td> -->
+                <!-- <td>123</td> -->
+                <td>${{ microsoft_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Amazon</td>
                 <td>AMZN</td>
-                <td>123</td>
-                <!-- <td>${{ amazon_price.close }}</td> -->
+                <!-- <td>123</td> -->
+                <td>${{ amazon_price.close }}</td>
                 <td><button class="buy-button">Buy</button></td>
             </tr>
             <tr>
                 <td>Tesla</td>
                 <td>TSLA</td>
-                <td>123</td>
-                <!-- <td>${{ tesla_price.close }}</td> -->
+                <!-- <td>123</td> -->
+                <td>${{ tesla_price.close }}</td>
                 <td>
                     <a href="">
                     <button class="buy-button">Buy</button>
@@ -82,8 +82,18 @@
                 <td>{{ stock.ticker }}</td>
                 <td>{{ stock.shares }}</td>
                 <td>${{ stock.bought_at|floatformat:2 }}</td>
-                <td>-</td>
-                <td>0</td>
+
+                {% if stock.ticker == 'MSFT' %}
+                <td>${{ microsoft_price.close }}</td>
+                {% elif stock.ticker == 'AMZN' %}
+                <td>${{ amazon_price.close }}</td>
+                {% elif stock.ticker == 'AAPL' %}
+                <td>${{ apple_price.close }}</td>
+                {% else %}
+                <td>$127.68</td>
+                {% endif %}
+
+                <td>$3.68</td>
                 
             </tr>
             {% endfor %}

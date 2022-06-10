@@ -2,7 +2,7 @@
 {% block content %}
 <h2>Your accounts</h2>
 {% for account in accounts %}
-  {% if account.user_id == user_id and account.account_type != 'Loan account' %}
+  {% if account.user_id == user_id and account.account_type != 'Loan Account' %}
   <div>
   <h3><button id="{{account.id}}" onclick="showHide(`{{account.id}}`)">{{ account.title }} - {{ account.money|floatformat:2 }}kr</button></h3>
   <table id="account-table-{{account.id}}" class="account-table hidden">
